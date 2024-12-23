@@ -66,6 +66,8 @@ public class UserController {
         itemReserveTablePane.setVisible(false);
         borrow.setVisible(false);
         profile.setVisible(false);
+        
+        genderEditField.setItems(genders);
     }
 
     @FXML
@@ -149,6 +151,12 @@ public class UserController {
     ObservableList<equipmentModel> filteredListEquipment = FXCollections.observableArrayList();
     ObservableList<reservationModel> filteredListReservation = FXCollections.observableArrayList();
     ObservableList<borrowModel> filteredListBorrow = FXCollections.observableArrayList();
+    
+    // CheckBox
+    ObservableList<String> years = FXCollections.observableArrayList("1", "2", "3", "4");
+    ObservableList<String> genders = FXCollections.observableArrayList("Male", "Female");
+    ObservableList<String> sections = FXCollections.observableArrayList("A", "B", "C", "D", "E", "F");
+    ObservableList<String> courses = FXCollections.observableArrayList("BSIT", "BSBA", "BSA", "BTLEd");
     
     public void search() {
         if(reserveListButton.getText().equals("Reserved Items")){
@@ -697,10 +705,6 @@ public class UserController {
     
     @FXML private TextField fnameField, mnameField, lastNameField, suffixField, departmentEditField, yearSectionFIeld, idEditField, usernameEditField, passwordField, confirmPasswordField;
     @FXML private ChoiceBox<String> genderEditField;
-    ObservableList<String> genderOptions = FXCollections.observableArrayList("Male", "Female");
-    public void genderBox() {
-      genderEditField.setItems(genderOptions);
-    }
     public void setEditProfileField() {
         User loggedInUser = fetchLoggedInUser();
         if (loggedInUser != null) {
@@ -708,11 +712,10 @@ public class UserController {
             mnameField.setText(loggedInUser.getMname()+"");
             lastNameField.setText(loggedInUser.getLname()+"");
             suffixField.setText(loggedInUser.getSuffix()+"");
-            genderBox();
-            if (loggedInUser.getGender() != null && genderOptions.contains(loggedInUser.getGender())) {
+            if (loggedInUser.getGender() != null && genders.contains(loggedInUser.getGender())) {
             genderEditField.setValue(loggedInUser.getGender()); // Display the fetched gender
         } else {
-            genderEditField.setValue("Female"); // Default value if none is found
+            genderEditField.setValue("Male"); // Default value if none is found
         }
             idEditField.setText(loggedInUser.getSchoolId()+"");
             usernameEditField.setText(loggedInUser.getUsername()+"");

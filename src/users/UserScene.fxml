@@ -59,7 +59,7 @@
             <Separator layoutX="393.0" layoutY="87.0" prefHeight="3.0" prefWidth="126.0" />
          </children>
       </Pane>
-      <Pane fx:id="reserve" layoutX="150.0" layoutY="3.0" prefHeight="400.0" prefWidth="550.0">
+      <Pane fx:id="reserve" layoutX="150.0" layoutY="3.0" prefHeight="400.0" prefWidth="550.0" visible="false">
          <children>
             <Pane layoutX="13.0" layoutY="14.0" prefHeight="56.0" prefWidth="525.0" style="-fx-background-color: grey;">
                <children>
@@ -99,7 +99,7 @@
             </Pane>
          </children>
       </Pane>
-      <Pane fx:id="profile" layoutX="150.0" layoutY="-14.0" prefHeight="400.0" prefWidth="550.0" visible="false">
+      <Pane fx:id="profile" layoutX="150.0" layoutY="-14.0" prefHeight="400.0" prefWidth="550.0">
          <children>
             <Pane fx:id="profilePane" layoutY="89.0" prefHeight="288.0" prefWidth="550.0" visible="false">
                <children>

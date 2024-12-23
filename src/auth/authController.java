@@ -160,6 +160,23 @@ public class authController {
                     return false;
             }
         }
+        
+        if (!fname.getText().matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(null, "First name must contain only letters, no numbers or special characters.");
+            return false;
+        }
+        if (!lname.getText().matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
+            return false;
+        }
+        if (!mname.getText().matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
+            return false;
+        }
+        if (!suffix.getText().isEmpty() && !suffix.getText().matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(null, "Suffix must contain only letters, no numbers or special characters.");
+            return false;
+        }
         return true;
     }
     @FXML private TextField userRegister,passRegister,passConfirmRegister;
