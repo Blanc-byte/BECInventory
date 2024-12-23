@@ -7,14 +7,13 @@ package controllers;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -43,6 +42,7 @@ public class adminController {
     @FXML private TextField search,historySearch, searchReservation, searchEquipment, searchUser, quantity, usersss, nameOfEquipment, stocksAvailable;
     @FXML private Pane userPane;
     @FXML private Button add, save, cons;
+    @FXML private PasswordField password;
     public void initialize()throws Exception{
         connect();
         loadBorrowersTable();
@@ -55,6 +55,15 @@ public class adminController {
         
         
     }
+    String BECpassword = "dorsu-bec2024";
+    public void checkPassword(){
+        if(password.getText().equals(BECpassword)){
+            logInPane.setVisible(false);
+            navigation.setVisible(true);
+            home.setVisible(true);
+        }
+    }
+    
     
     public void checkFirstTheStocks()throws Exception{
         if(nameOfEquipment.getText().equals("") || stocksAvailable.getText().equals("")){
@@ -837,7 +846,7 @@ public class adminController {
         return con;
     
     }
-    @FXML private Pane home, reservation, borrow, historyPane, equipmentsPane;
+    @FXML private Pane home, reservation, borrow, historyPane, equipmentsPane, logInPane, navigation;
     @FXML private Button homebtn, reservationbtn, borrowbtn, historybtn,equipmentbtn;
 
     private void resetButtonStyles() {
@@ -921,6 +930,7 @@ public class adminController {
         userPane.setStyle(paneDesign);
         historyPane.setStyle(paneDesign);
         equipmentsPane.setStyle(paneDesign);
+        logInPane.setStyle(paneDesign);
         // Table styling for the body (white background, no borders)
         String tableDesign = 
             "-fx-border-color: transparent; " +
