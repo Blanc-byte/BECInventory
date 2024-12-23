@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserController">
+   <children>
+      <Pane prefHeight="400.0" prefWidth="150.0" style="-fx-background-color: grey;">
+         <children>
+            <Button fx:id="borrowButton" layoutX="43.0" layoutY="176.0" mnemonicParsing="false" onAction="#BorrowClick" prefHeight="25.0" prefWidth="77.0" text="Borrow" />
+            <Button fx:id="reserveButton" layoutX="43.0" layoutY="144.0" mnemonicParsing="false" onAction="#reserveClick" prefHeight="25.0" prefWidth="77.0" text="Reserve" />
+            <Circle fill="DODGERBLUE" layoutX="82.0" layoutY="42.0" radius="28.0" stroke="BLACK" strokeType="INSIDE" />
+            <Label fx:id="nameLabel" alignment="CENTER" layoutX="9.0" layoutY="79.0" prefHeight="17.0" prefWidth="133.0" text="Welcome, User" textFill="#faf6f6">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+            <Button fx:id="profileButton" layoutX="43.0" layoutY="208.0" mnemonicParsing="false" onAction="#profileClick" prefHeight="25.0" prefWidth="77.0" text="Profile" />
+            <Button layoutX="44.0" layoutY="334.0" mnemonicParsing="false" onAction="#logOut" prefHeight="36.0" prefWidth="77.0" text="Sign Out" />
+         </children>
+      </Pane>
+      <Pane fx:id="borrow" layoutX="150.0" layoutY="3.0" prefHeight="400.0" prefWidth="550.0" visible="false">
+         <children>
+            <TableView fx:id="BorrowTable" layoutX="13.0" layoutY="111.0" prefHeight="200.0" prefWidth="525.0">
+              <columns>
+                  <TableColumn fx:id="itemBorrowColumn" prefWidth="179.20001220703125" text="Item" />
+                  <TableColumn fx:id="serialColumn" prefWidth="111.199951171875" text="Serial Id" />
+                <TableColumn fx:id="dateBorrowColumn" prefWidth="120.00003051757812" text="Date Borrow" />
+                  <TableColumn fx:id="statusColumn" prefWidth="114.4000244140625" text="Status" />
+              </columns>
+            </TableView>
+            <Pane layoutX="13.0" layoutY="14.0" prefHeight="56.0" prefWidth="525.0" style="-fx-background-color: grey;">
+               <children>
+                  <Text fill="#fffdfd" layoutX="14.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Borrow" wrappingWidth="89.115234375">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Text>
+                  <Separator layoutX="131.0" layoutY="9.0" orientation="VERTICAL" prefHeight="36.0" prefWidth="4.0" />
+                  <TextField fx:id="searchBorrow" layoutX="273.0" layoutY="15.0" onKeyReleased="#searchMeBorrow" prefHeight="25.0" prefWidth="209.0" />
+               </children>
+            </Pane>
+            <Label fx:id="info1" alignment="CENTER" layoutX="25.0" layoutY="81.0" prefHeight="17.0" prefWidth="525.0" text="Your Current Borrowed Items" />
+            <Separator layoutX="53.0" layoutY="88.0" prefHeight="3.0" prefWidth="126.0" />
+            <Separator layoutX="393.0" layoutY="87.0" prefHeight="3.0" prefWidth="126.0" />
+         </children>
+      </Pane>
+      <Pane fx:id="reserve" layoutX="150.0" layoutY="3.0" prefHeight="400.0" prefWidth="550.0">
+         <children>
+            <Pane layoutX="13.0" layoutY="14.0" prefHeight="56.0" prefWidth="525.0" style="-fx-background-color: grey;">
+               <children>
+                  <TextField fx:id="searchEquipment" layoutX="174.0" layoutY="16.0" onKeyReleased="#search" prefHeight="25.0" prefWidth="209.0" />
+                  <Text fill="#fffdfd" layoutX="14.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Reserve Item" wrappingWidth="125.91522216796875">
+                     <font>
+                        <Font name="System Bold" size="19.0" />
+                     </font>
+                  </Text>
+                  <Separator layoutX="150.0" layoutY="10.0" orientation="VERTICAL" prefHeight="36.0" prefWidth="4.0" />
+                  <Separator layoutX="398.0" layoutY="10.0" orientation="VERTICAL" prefHeight="36.0" prefWidth="4.0" />
+                  <Button fx:id="reserveListButton" layoutX="415.0" layoutY="15.0" mnemonicParsing="false" onAction="#reserveListClick" text="Reserved Items" />
+               </children>
+            </Pane>
+            <Label fx:id="info" alignment="CENTER" layoutX="14.0" layoutY="86.0" prefHeight="17.0" prefWidth="525.0" text="Available Items to be Borrowed" />
+            <Pane fx:id="itemTablePane" layoutY="111.0" prefHeight="200.0" prefWidth="550.0" visible="false">
+               <children>
+                  <TableView fx:id="equipmentTable" layoutX="12.0" layoutY="1.0" prefHeight="200.0" prefWidth="525.0">
+                     <columns>
+                        <TableColumn fx:id="itemColumn" prefWidth="119.20001220703125" text="Item" />
+                        <TableColumn fx:id="quantityColumn" prefWidth="101.59991455078125" text="Available" />
+                        <TableColumn fx:id="actionColumn" prefWidth="75.0" text="Action" />
+                     </columns>
+                  </TableView>
+               </children>
+            </Pane>
+            <Pane fx:id="itemReserveTablePane" layoutX="10.0" layoutY="121.0" prefHeight="200.0" prefWidth="550.0">
+               <children>
+                  <TableView fx:id="itemReservedTable" prefHeight="200.0" prefWidth="525.0">
+                     <columns>
+                        <TableColumn fx:id="itemReserveColumn" prefWidth="137.5999755859375" text="Item" />
+                        <TableColumn fx:id="quantityReserveColumn" prefWidth="136.79998779296875" text="Quantity Reserved" />
+                        <TableColumn fx:id="dateColumn" prefWidth="132.0" text="Reserved Date" />
+                     </columns>
+                  </TableView>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="profile" layoutX="150.0" layoutY="-14.0" prefHeight="400.0" prefWidth="550.0" visible="false">
+         <children>
+            <Pane fx:id="profilePane" layoutY="89.0" prefHeight="288.0" prefWidth="550.0" visible="false">
+               <children>
+                  <GridPane fx:id="profileHolder" layoutY="25.0" prefHeight="206.0" prefWidth="488.0" vgap="20.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="258.20001220703125" minWidth="10.0" prefWidth="226.3999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="334.0" minWidth="10.0" prefWidth="262.4000244140625" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="177.0" text="FullName">
+                           <font>
+                              <Font name="Berlin Sans FB" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="userNameField" editable="false" prefHeight="26.0" prefWidth="297.0" GridPane.columnIndex="1" />
+                        <Label alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="175.0" text="School Id" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Berlin Sans FB" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="172.0" text="Gender" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="Berlin Sans FB" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="idField" editable="false" prefHeight="26.0" prefWidth="297.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="genderField" editable="false" prefHeight="26.0" prefWidth="221.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="176.0" text="Department" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="Berlin Sans FB" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="departmentField" editable="false" prefHeight="26.0" prefWidth="297.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="182.0" text="Year &amp; Section" GridPane.rowIndex="4">
+                           <font>
+                              <Font name="Berlin Sans FB" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="yearField" editable="false" prefHeight="26.0" prefWidth="297.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                     </children>
+                  </GridPane>
+                  <Button fx:id="editProfileButton" layoutX="447.0" layoutY="249.0" mnemonicParsing="false" onAction="#editProfileClick" prefHeight="25.0" prefWidth="82.0" text="Edit Profile" />
+               </children>
+            </Pane>
+            <Pane layoutX="12.0" layoutY="13.0" prefHeight="56.0" prefWidth="525.0" style="-fx-background-color: grey;">
+               <children>
+                  <Text fill="#fffdfd" layoutX="14.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Profile" wrappingWidth="89.115234375">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Text>
+                  <Separator layoutX="131.0" layoutY="9.0" orientation="VERTICAL" prefHeight="36.0" prefWidth="4.0" />
+               </children>
+            </Pane>
+            <Pane fx:id="editProfilePane" layoutY="92.0" prefHeight="307.0" prefWidth="550.0">
+               <children>
+                  <GridPane layoutX="6.0" layoutY="5.0" prefHeight="165.0" prefWidth="525.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="173.79998779296875" minWidth="10.0" prefWidth="93.8000244140625" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.0" minWidth="10.0" prefWidth="156.1999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.20001220703125" minWidth="10.0" prefWidth="130.39999999999998" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.20001220703125" minWidth="10.0" prefWidth="190.39999999999998" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="First Name">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Middle Name" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Last Name" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="33.0" prefWidth="81.0" text="Suffix" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Gender" GridPane.rowIndex="4">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="fnameField" GridPane.columnIndex="1" />
+                        <TextField fx:id="mnameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ChoiceBox fx:id="genderEditField" prefHeight="26.0" prefWidth="103.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Department" GridPane.columnIndex="2">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Year &amp; Section" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="departmentEditField" GridPane.columnIndex="3" />
+                        <TextField fx:id="yearSectionFIeld" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <TextField fx:id="lastNameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="School-ID" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="idEditField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Username" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="usernameEditField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="suffixField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+                  <Separator layoutX="15.0" layoutY="192.0" prefHeight="3.0" prefWidth="160.0" />
+                  <Separator layoutX="371.0" layoutY="192.0" prefHeight="3.0" prefWidth="160.0" />
+                  <Text layoutX="196.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Password" textAlignment="CENTER" wrappingWidth="160.0" />
+                  <GridPane layoutX="14.0" layoutY="222.0" prefHeight="45.0" prefWidth="461.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="20.8000244140625" minHeight="10.0" prefHeight="17.60001220703125" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="31.19998779296875" minHeight="10.0" prefHeight="27.19998779296875" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="New Password">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Confirm Password" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="passwordField" GridPane.columnIndex="1" />
+                        <PasswordField fx:id="confirmPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+                  <Button fx:id="saveProfileButton" layoutX="428.0" layoutY="280.0" mnemonicParsing="false" onAction="#updateUserDatabase" prefHeight="25.0" prefWidth="108.0" text="Save Profile" />
+               </children>
+            </Pane>
+            <Separator layoutX="17.0" layoutY="89.0" prefHeight="3.0" prefWidth="160.0" />
+            <Separator layoutX="373.0" layoutY="89.0" prefHeight="3.0" prefWidth="160.0" />
+            <Text layoutX="198.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Personal Data" textAlignment="CENTER" wrappingWidth="160.0" />
+         </children></Pane>
+   </children>
+</AnchorPane>
