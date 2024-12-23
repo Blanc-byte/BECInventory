@@ -422,10 +422,18 @@ public class UserController {
         String equipmentId = equipment.getId();
         String equipmentName = equipment.getName();
         String quantityStr = JOptionPane.showInputDialog("Enter the quantity to reserve:");
-        if (quantityStr == null || quantityStr.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Quantity cannot be empty!");
-            return; // If user cancels or enters an empty quantity, exit the method
-        }
+//        if (quantityStr == null || quantityStr.trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(null, "Quantity cannot be empty!");
+//            return; // If user cancels or enters an empty quantity, exit the method
+//        }
+            if (quantityStr == null) {
+                return; // Exit the method if the user cancels the input
+            }
+
+            if (quantityStr.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Quantity cannot be empty!");
+                return; // Exit the method if the quantity is empty
+            }
         // Validate if the quantity is a valid integer
         int quantity;
         try {

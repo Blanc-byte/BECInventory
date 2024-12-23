@@ -166,11 +166,11 @@ public class authController {
             return false;
         }
         if (!lname.getText().matches("[a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
+            JOptionPane.showMessageDialog(null, "Lastzzz name must contain only letters, no numbers or special characters.");
             return false;
         }
-        if (!mname.getText().matches("[a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
+        if (!mname.getText().isEmpty() && !mname.getText().matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(null, "Middle name must contain only letters, no numbers or special characters.");
             return false;
         }
         if (!suffix.getText().isEmpty() && !suffix.getText().matches("[a-zA-Z]+")) {
