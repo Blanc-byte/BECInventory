@@ -719,6 +719,14 @@ public class adminController {
         java.sql.Statement statement = con.createStatement();
         statement.executeUpdate("UPDATE borrow SET status = 'returned', returned_at = NOW() WHERE id = '" + id + "';");
         
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM serial WHERE serial_num = '" + serid + "';");
+        String equipID = "";
+        while(resultSet.next()){
+            equipID = resultSet.getString("equipment_id");
+        }
+        
+        statement.executeUpdate("UPDATE equipments SET available = available+1 WHERE id = '" + equipID + "';");
+        
         statement.executeUpdate("UPDATE serial SET status = 'available' WHERE serial_num = '" + serid + "';");
     }
     
@@ -903,7 +911,9 @@ public class adminController {
         equipmentsPane.setVisible(true);
         loadEquipmentsTable2();
     }
-    public void setDesign(){
+    public void setDesign()throws Exception{
+        homeClick();
+        homebtn.setStyle("-fx-background-color: #00a693; -fx-text-fill: white;");
         String paneDesign = "-fx-background-color:linear-gradient(to bottom right, #272b3f, #256b52);";
         home.setStyle(paneDesign);
         borrow.setStyle(paneDesign);
