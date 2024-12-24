@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javax.swing.JOptionPane;
@@ -82,18 +83,31 @@ public class authController {
         }
     }
     public boolean checkregistrarauth()throws Exception{
-        String adminAd="ADMINistrator", passAd="ADMINistrator";
+        String adminAd="ADMIN", passAd="ADMIN";
         if(adminAd.equals(user.getText()) && passAd.equals(pass.getText())){
             return true;
         }
         return false;
     }
     
+    @FXML 
+    public void adminLogin(MouseEvent  event) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/stage.fxml"));
+                Parent root = loader.load();
+
+                Stage newStage = new Stage();
+                newStage.setScene(new Scene(root));
+                newStage.show();
+
+                Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+                currentStage.close();
+        }
+    
     public void logIn(ActionEvent event)throws Exception{
         if(!user.getText().equals("") && !pass.getText().equals("")){
             boolean logIned = true;
             if(checkregistrarauth()){
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/registrar/stage.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/admin/stage.fxml"));
                 Parent root = loader.load();
 
                 Stage newStage = new Stage();
@@ -110,10 +124,14 @@ public class authController {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/users/UserScene.fxml"));
                         Parent root = loader.load();
 
+                        // Apply the stylesheet programmatically
+                        root.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+
                         Stage newStage = new Stage();
                         newStage.setScene(new Scene(root));
                         newStage.show();
 
+                        // Close the current stage
                         Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
                         currentStage.close();
 

@@ -19,6 +19,7 @@ public class User {
     private final StringProperty role;
 
     // Constructor
+
     public User(String id, String schoolId, String fname, String mname, String lname, String suffix, String gender, String username, String password, String department, String yearSection, String role) {
         this.id = new SimpleStringProperty(id);
         this.schoolId = new SimpleStringProperty(schoolId);
@@ -33,6 +34,11 @@ public class User {
         this.yearSection = new SimpleStringProperty(yearSection);
         this.role = new SimpleStringProperty(role);
     }
+    public User(String id, String schoolId, String fname, String mname, String lname, String suffix, String department, String yearSection, String role) {
+        this(id, schoolId, fname, mname, lname, suffix, "", "", "", department, yearSection, role);
+    }
+   
+
 
     // Getters and Setters with StringProperty for binding
     public StringProperty idProperty() {

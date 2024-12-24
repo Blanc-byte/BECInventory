@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.adminController">
+   <children>
+      <Pane fx:id="navigation" prefHeight="400.0" prefWidth="150.0" style="-fx-background-color: white;" visible="false">
+         <children>
+            <Button fx:id="homebtn" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#homeClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+               <font>
+                  <Font name="Bell MT Bold" size="13.0" />
+               </font></Button>
+            <Button fx:id="reservationbtn" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" onAction="#reservationClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+               <font>
+                  <Font name="Bell MT Bold" size="13.0" />
+               </font></Button>
+            <Button fx:id="historybtn" layoutX="10.0" layoutY="250.0" mnemonicParsing="false" onAction="#historyClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+               <font>
+                  <Font name="Bell MT Bold" size="13.0" />
+               </font></Button>
+            <Button fx:id="borrowbtn" layoutX="10.0" layoutY="190.0" mnemonicParsing="false" onAction="#borrowClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+               <font>
+                  <Font name="Bell MT Bold" size="13.0" />
+               </font></Button>
+            <Button fx:id="equipmentbtn" layoutX="10.0" layoutY="220.0" mnemonicParsing="false" onAction="#equipmentsClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+               <font>
+                  <Font name="Bell MT Bold" size="13.0" />
+               </font>
+            </Button>
+            <ImageView fitHeight="57.0" fitWidth="65.0" layoutX="42.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/admin.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Pane fx:id="home" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+         <children>
+            <TableView fx:id="borrowersTable" layoutX="15.0" layoutY="184.0" prefHeight="200.0" prefWidth="720.0">
+              <columns>
+                <TableColumn fx:id="c1" prefWidth="166.0" text="Name" />
+                <TableColumn fx:id="c2" prefWidth="47.0" text="Course" />
+                  <TableColumn fx:id="c3" prefWidth="42.0" text="Y&amp;S" />
+                  <TableColumn fx:id="c4" prefWidth="86.0" text="Item" />
+                  <TableColumn fx:id="c5" prefWidth="93.0" text="Date" />
+                  <TableColumn fx:id="c6" prefWidth="109.0" text="Serial" />
+                  <TableColumn fx:id="c7" minWidth="0.0" prefWidth="87.0" text="role" />
+                  <TableColumn fx:id="c8" prefWidth="88.0" />
+                  <TableColumn fx:id="c9" minWidth="7.0" prefWidth="15.0" />
+              </columns>
+            </TableView>
+            <TextField fx:id="search" layoutX="15.0" layoutY="152.0" onKeyReleased="#searchMe" prefHeight="25.0" prefWidth="300.0" />
+            <Pane layoutY="33.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="14.0" layoutY="19.0" text="HOME">
+                     <font>
+                        <Font name="Agency FB Bold" size="34.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="reservation" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+         <children>
+            <TableView fx:id="reservationTable" layoutX="15.0" layoutY="57.0" prefHeight="200.0" prefWidth="720.0">
+              <columns>
+                <TableColumn prefWidth="158.0" text="Name" fx:id="x1" />
+                <TableColumn prefWidth="93.0" text="Department" fx:id="x2" />
+                  <TableColumn prefWidth="55.0" text="y&amp;s" fx:id="x3" />
+                  <TableColumn prefWidth="62.0" text="Role" fx:id="x4" />
+                  <TableColumn prefWidth="103.0" text="Item" fx:id="x5" />
+                  <TableColumn prefWidth="57.0" text="Quantity" fx:id="x6" />
+                  <TableColumn prefWidth="101.0" text="Date" fx:id="x7" />
+                  <TableColumn prefWidth="87.0" fx:id="x8" />
+              </columns>
+            </TableView>
+            <TextField fx:id="searchReservation" layoutX="14.0" layoutY="22.0" onKeyReleased="#searchMeReservation" prefHeight="25.0" prefWidth="300.0" />
+            <Pane layoutY="283.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="578.0" layoutY="19.0" text="RESERVATION">
+                     <font>
+                        <Font name="Agency FB Bold" size="34.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="borrow" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+         <children>
+            <TableView fx:id="borrowsTable" layoutX="14.0" layoutY="68.0" prefHeight="300.0" prefWidth="592.0">
+              <columns>
+                <TableColumn fx:id="z1" prefWidth="173.0" text="Name" />
+                <TableColumn fx:id="z2" prefWidth="63.0" text="Stock" />
+                  <TableColumn fx:id="z3" prefWidth="65.0" text="Available" />
+                  <TableColumn fx:id="z4" prefWidth="189.0" text="Date Added" />
+                  <TableColumn fx:id="z5" prefWidth="83.0" />
+              </columns>
+            </TableView>
+            <TextField fx:id="searchEquipment" layoutX="14.0" layoutY="32.0" onKeyReleased="#searchMeEquipments" prefHeight="25.0" prefWidth="300.0" />
+            <Pane layoutX="625.0" prefHeight="400.0" prefWidth="80.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="31.0" prefHeight="260.0" prefWidth="19.0" text="BORROW" wrapText="true">
+                     <font>
+                        <Font name="Agency FB Bold" size="34.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="userPane" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" style="-fx-background-color: #99dbd3;" visible="false">
+         <children>
+            <TableView fx:id="userTable" layoutX="16.0" layoutY="75.0" prefHeight="176.0" prefWidth="720.0">
+              <columns>
+                <TableColumn fx:id="a1" prefWidth="92.0" text="Fname" />
+                <TableColumn fx:id="a2" prefWidth="57.0" text="Mname" />
+                  <TableColumn fx:id="a3" prefWidth="173.0" text="Lname" />
+                  <TableColumn fx:id="a4" prefWidth="128.0" text="Suffix" />
+                  <TableColumn fx:id="a5" prefWidth="59.0" text="Course" />
+                  <TableColumn fx:id="a6" prefWidth="33.0" text="Y&amp;S" />
+                  <TableColumn fx:id="a7" prefWidth="77.0" text="Role" />
+                  <TableColumn fx:id="a8" prefWidth="98.0" />
+              </columns>
+            </TableView>
+            <TextField fx:id="searchUser" layoutX="15.0" layoutY="43.0" onKeyReleased="#searchMeUsers" prefHeight="25.0" prefWidth="287.0" />
+            <TextField fx:id="quantity" layoutX="333.0" layoutY="307.0" onKeyReleased="#handleQuantityInput" prefHeight="25.0" prefWidth="174.0" />
+            <Label layoutX="264.0" layoutY="308.0" text="Quantity">
+               <font>
+                  <Font name="Agency FB Bold" size="20.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.843137264251709" green="1.0" blue="0.929411768913269" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Label layoutX="263.0" layoutY="270.0" text="Selected">
+               <font>
+                  <Font name="Agency FB Bold" size="20.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.843137264251709" green="1.0" blue="0.929411768913269" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <TextField fx:id="usersss" editable="false" layoutX="332.0" layoutY="269.0" onKeyReleased="#handleQuantityInput" prefHeight="25.0" prefWidth="174.0" />
+            <Button fx:id="cons" layoutX="385.0" layoutY="348.0" mnemonicParsing="false" onAction="#confirmClick" />
+         </children>
+      </Pane>
+      <Pane fx:id="historyPane" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+         <children>
+            <TableView fx:id="historyTable" layoutX="15.0" layoutY="126.0" prefHeight="250.0" prefWidth="720.0">
+               <columns>
+                  <TableColumn fx:id="c11" prefWidth="166.0" text="Name" />
+                  <TableColumn fx:id="c21" prefWidth="47.0" text="Course" />
+                  <TableColumn fx:id="c31" prefWidth="42.0" text="Y&amp;S" />
+                  <TableColumn fx:id="c41" prefWidth="86.0" text="Item" />
+                  <TableColumn fx:id="c51" prefWidth="136.0" text="Date" />
+                  <TableColumn fx:id="c61" prefWidth="124.0" text="Serial" />
+                  <TableColumn fx:id="c71" minWidth="0.0" prefWidth="117.0" text="role" />
+                  <TableColumn fx:id="c91" minWidth="0.0" prefWidth="0.0" />
+               </columns>
+            </TableView>
+            <TextField fx:id="historySearch" layoutX="15.0" layoutY="91.0" maxWidth="300.0" onKeyReleased="#searchMeHistory" prefWidth="300.0" />
+            <Pane layoutX="353.0" layoutY="14.0" prefHeight="80.0" prefWidth="397.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="14.0" layoutY="19.0" text="HISTORY">
+                     <font>
+                        <Font name="Agency FB Bold" size="34.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Pane fx:id="equipmentsPane" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+         <children>
+            <TableView fx:id="equipmentsTable" layoutX="144.0" layoutY="51.0" prefHeight="210.0" prefWidth="592.0">
+               <columns>
+                  <TableColumn fx:id="s1" prefWidth="173.0" text="Name" />
+                  <TableColumn fx:id="s2" prefWidth="43.0" text="Stock" />
+                  <TableColumn fx:id="s3" prefWidth="57.0" text="Available" />
+                  <TableColumn fx:id="s4" prefWidth="180.0" text="Date Added" />
+                  <TableColumn fx:id="s5" prefWidth="134.0" />
+               </columns>
+            </TableView>
+            <TextField fx:id="nameOfEquipment" layoutX="144.0" layoutY="313.0" />
+            <Label layoutX="144.0" layoutY="287.0" text="Name">
+               <font>
+                  <Font name="Agency FB Bold" size="20.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.843137264251709" green="1.0" blue="0.929411768913269" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <TextField fx:id="stocksAvailable" layoutX="322.0" layoutY="312.0" onKeyReleased="#handleQuantity" />
+            <Label layoutX="322.0" layoutY="286.0" text="Stocks">
+               <font>
+                  <Font name="Agency FB Bold" size="20.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.843137264251709" green="1.0" blue="0.929411768913269" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Button fx:id="add" layoutX="144.0" layoutY="352.0" mnemonicParsing="false" onAction="#checkFirstTheStocks" style="-fx-background-radius: 10;" />
+            <Pane layoutX="31.0" prefHeight="400.0" prefWidth="80.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="32.0" layoutY="29.0" prefHeight="371.0" prefWidth="8.0" text="EQUIPMENTS" wrapText="true">
+                     <font>
+                        <Font name="Agency FB Bold" size="28.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+            <Button fx:id="save" layoutX="194.0" layoutY="352.0" mnemonicParsing="false" onAction="#editEquipment" />
+         </children>
+      </Pane>
+      <Pane fx:id="logInPane" prefHeight="400.0" prefWidth="900.0">
+         <children>
+            <Label layoutX="37.0" layoutY="234.0" text="DORSU-BEC">
+               <font>
+                  <Font name="Agency FB Bold" size="45.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.10721247643232346" green="0.5263158082962036" blue="0.4774203896522522" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.006711409395973154">
+                           <color>
+                              <Color red="0.10721247643232346" green="0.5263158082962036" blue="0.4774203896522522" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.5575048923492432" green="0.8421052694320679" blue="0.8278752565383911" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Label layoutX="37.0" layoutY="302.0" text="INVENTORY SYSTEM">
+               <font>
+                  <Font name="Agency FB Bold" size="45.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.10721247643232346" green="0.5263158082962036" blue="0.4774203896522522" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.006711409395973154">
+                           <color>
+                              <Color red="0.10721247643232346" green="0.5263158082962036" blue="0.4774203896522522" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.5575048923492432" green="0.8421052694320679" blue="0.8278752565383911" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Pane prefHeight="200.0" prefWidth="900.0" style="-fx-background-color: white;">
+               <children>
+                  <PasswordField fx:id="password" layoutX="737.0" layoutY="163.0" onKeyReleased="#checkPassword" />
+                  <ImageView blendMode="MULTIPLY" fitHeight="150.0" fitWidth="200.0" layoutX="37.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/dorsu.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

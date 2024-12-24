@@ -1,0 +1,59 @@
+
+.white-background {
+    -fx-background-color: #fff;
+}
+
+.grey-background {
+    -fx-background-color: grey;
+}
+
+.round-layout {
+    -fx-border-radius: 50;
+    -fx-border-color: #d7d7d7;
+}
+
+.transparent {
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+.textLinear {
+    -fx-text-fill: linear-gradient(from 0% 0% to 100% 0%, rgba(2, 0, 36, 1) 0%, rgba(9, 121, 44, 1) 47%, rgba(0, 212, 255, 1) 100%);
+    -fx-font-family: "Berlin Sans FB"; /* Set your desired font */
+    -fx-font-size: 18px; /* Optional: Adjust text size */
+}
+
+.navColor {
+    -fx-background-color: #000000;
+    -fx-text-fill: white;
+}
+
+/* Table Styling */
+.table-view {
+    -fx-background-color: #ffffff; /* White background */
+    -fx-border-color: #ddd; /* Light border around the table */
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2); /* Soft shadow */
+}
+
+.table-column-header {
+    -fx-background-color: #00adb5; /* Accent color for headers */
+    -fx-text-fill: #ffffff; /* White text */
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-border-width: 0 0 1px 0; /* Bottom border */
+    -fx-border-color: #ddd;
+}
+
+.table-cell {
+    -fx-padding: 10px; /* Padding for readability */
+    -fx-alignment: center; /* Center align text */
+    -fx-font-size: 14px;
+    -fx-border-width: 0 0 1px 0; /* Bottom border for rows */
+    -fx-border-color: #ddd;
+}
+
+.table-cell:empty {
+    -fx-background-color: #f8f9fa; /* Slightly different shade for empty cells */
+}

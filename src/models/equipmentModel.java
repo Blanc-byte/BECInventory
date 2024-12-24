@@ -18,7 +18,6 @@ public class equipmentModel {
     private final StringProperty available;
     private final StringProperty dateCreated;
 
-    // Constructor to initialize the properties
     public equipmentModel(String id, String name, String stock, String available, String dateCreated) {
         this.id = new SimpleStringProperty(id);
         this.name = new SimpleStringProperty(name);

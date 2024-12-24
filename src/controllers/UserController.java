@@ -19,6 +19,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,7 +30,10 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 import models.User;
@@ -68,6 +73,8 @@ public class UserController {
         profile.setVisible(false);
         
         genderEditField.setItems(genders);
+        updateStackPane(borrowStack, "/icons/borrow.png", countStatus("borrow")); 
+        updateStackPane(reserveStack, "/icons/reserve.png", countStatus("reserve"));
     }
 
     @FXML
@@ -76,7 +83,7 @@ public class UserController {
         reserve.setVisible(true);
         itemTablePane.setVisible(true);
         itemReserveTablePane.setVisible(false);
-        reserveListButton.setText("Reserved Items");
+        reserveListButton.setText("Reserved");
         borrow.setVisible(false);
         profile.setVisible(false);
     }
@@ -97,20 +104,22 @@ public class UserController {
         profile.setVisible(true);
         profilePane.setVisible(true);
         editProfilePane.setVisible(false);
+        updateStackPane(borrowStack, "/icons/borrow.png", countStatus("borrow")); // Example: 5 items borrowed
+        updateStackPane(reserveStack, "/icons/reserve.png", countStatus("reserve")); // Example: 3 items reserved
     }
     
     @FXML
     private void reserveListClick() throws Exception {
-       if (reserveListButton.getText().equals("Reserved Items")) {
+       if (reserveListButton.getText().equals("Reserved")) {
           itemTablePane.setVisible(false);
           itemReserveTablePane.setVisible(true);
-          reserveListButton.setText("Available Items");
+          reserveListButton.setText("Available");
           info.setText("Currently Reserved Items");
         }
-       else if(reserveListButton.getText().equals("Available Items")){
+       else if(reserveListButton.getText().equals("Available")){
           itemTablePane.setVisible(true);
           itemReserveTablePane.setVisible(false);
-          reserveListButton.setText("Reserved Items");
+          reserveListButton.setText("Reserved");
           info.setText("Available Items to be Borrowed");
        }
 
@@ -359,27 +368,41 @@ public class UserController {
     
     // Define the button inside the action column
     actionColumn.setCellFactory(param -> new TableCell<equipmentModel, String>() {
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty) {
-                setGraphic(null); // Remove graphic when the row is empty
+    @Override
+    protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty) {
+            setGraphic(null); // Remove graphic when the row is empty
+        } else {
+            equipmentModel equipment = getTableView().getItems().get(getIndex());
+            int availableStock = Integer.parseInt(equipment.getAvailable());
+
+            if (availableStock > 0) {
+                Button reserveButton = new Button();
+
+                // Load the image
+                Image reserveImage = new Image(getClass().getResourceAsStream("/icons/reserve.png"));
+                ImageView imageView = new ImageView(reserveImage);
+
+                // Set the image size
+                imageView.setFitWidth(16); // Set desired width
+                imageView.setFitHeight(16); // Set desired height
+
+                // Set the image as the graphic for the button
+                reserveButton.setGraphic(imageView);
+
+                // Add action listener for the button
+                reserveButton.setOnAction(event -> {
+                    reserveEquipment(equipment); // Call a method to handle the reserve action
+                });
+
+                setGraphic(reserveButton); // Set the button as the cell graphic
             } else {
-                equipmentModel equipment = getTableView().getItems().get(getIndex());
-                int availableStock = Integer.parseInt(equipment.getAvailable());
-                
-                 if (availableStock > 0) {
-                     Button reserveButton = new Button("Reserve");
-                     reserveButton.setOnAction(event -> {
-                        reserveEquipment(equipment);  // Call a method to handle the reserve action
-                    });
-                     setGraphic(reserveButton);
-                 } else {
-                     setGraphic(null); 
-                 }
+                setGraphic(null); // Remove graphic if stock is unavailable
             }
         }
-        });
+    }
+    });
         
         getRequest();
         equipmentTable.setItems(equipmentList);
@@ -733,6 +756,79 @@ public class UserController {
             System.out.println("No user is logged in.");
         }
     }
+    
+//    Counter for borrow and reserve
+    
+    @FXML private StackPane borrowStack, reserveStack;
+    // Method to dynamically update the StackPane
+    private void updateStackPane(StackPane stackPane, String iconPath, int count) {
+        // Clear previous children (if any)
+        stackPane.getChildren().clear();
+
+        // Icon Image
+        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+        icon.setFitWidth(30); // Adjust as needed
+        icon.setFitHeight(30);
+
+        // Badge Counter
+        Label badge = new Label(String.valueOf(count));
+        badge.getStyleClass().add("badge"); // Use CSS for badge styling
+
+        // Add Icon and Badge to the StackPane
+        stackPane.getChildren().addAll(icon, badge);
+
+        // Position the badge at the top-right corner
+        StackPane.setMargin(badge, new Insets(-10, -10, 0, 0)); // Adjust positioning
+        StackPane.setAlignment(badge, Pos.TOP_RIGHT); // Top-right alignment
+    }
+
+    // Example method to update counts dynamically
+    public void setBorrowCount(int count) {
+        updateStackPane(borrowStack, "/icons/borrow.png", count);
+    }
+
+    public void setReserveCount(int count) {
+        updateStackPane(reserveStack, "/icons/reserve.png", count);
+    }
+    
+   public Integer countStatus(String whois) {
+        int count = 0;
+        User loggedInUser = fetchLoggedInUser(); // Fetch the logged-in user
+
+        // Validate the `whois` input
+        if (!whois.equals("borrow") && !whois.equals("reserve")) {
+            throw new IllegalArgumentException("Invalid parameter for whois: " + whois);
+        }
+
+        // Determine the query based on `whois`
+        String query;
+        if (whois.equals("borrow")) {
+            query = "SELECT COUNT(*) AS count " +
+                    "FROM borrow " +
+                    "WHERE user_id = ? AND status = 'borrowed';";
+        } else {
+            query = "SELECT SUM(quantity) AS count " +
+                    "FROM reservation " +
+                    "WHERE user_id = ?;";
+        }
+
+        // Execute the query
+        try (PreparedStatement statement = con.prepareStatement(query)) {
+            statement.setString(1, loggedInUser.getId()); // Set the user_id dynamically
+            ResultSet resultSet = statement.executeQuery();
+
+            // Extract the count from the result set
+            if (resultSet.next()) {
+                count = resultSet.getInt("count");
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the exception for debugging
+        }
+
+        return count; // Return the valid count or 0 if an error occurred
+    }
+
+
 
     public Connection connect() {
         url = "jdbc:mysql://localhost:3306/becinventory";

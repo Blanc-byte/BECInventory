@@ -1,0 +1,89 @@
+.header-section {
+    -fx-background-color: linear-gradient(to right, #f8f9fa, #e9ecef); /* Light gradient for a modern look */
+    -fx-padding: 20px; /* Adds space around the content */
+    -fx-background-radius: 8; /* Rounded corners */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.1, 0, 4); /* Soft shadow for depth */
+    -fx-alignment: center; /* Centers content inside the section */
+    -fx-spacing: 20; /* Space between child elements */
+}
+
+/* Styling for the Reserve Item text */
+.header-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333; /* Dark text color */
+    -fx-padding: 0;
+}
+
+/* Styling for the search bar */
+.search-bar {
+    -fx-pref-width: 300px; /* Sets a fixed width */
+    -fx-background-color: white; /* White background for the input field */
+    -fx-border-color: #ccc; /* Light border */
+    -fx-border-radius: 4; /* Rounded corners */
+    -fx-padding: 10px; /* Inner padding for the text */
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.05), 2, 0.1, 0, 2); /* Inner shadow for depth */
+}
+
+/* Styling for the Reserved Items button */
+.reserved-button {
+    -fx-background-color: #007bff; /* Vibrant blue */
+    -fx-text-fill: white; /* White text color */
+    -fx-font-size: 16px;
+    -fx-padding: 7 15; /* Adds padding for the button */
+    -fx-background-radius: 4; /* Rounded corners */
+    -fx-cursor: hand; /* Pointer cursor on hover */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.1, 0, 2); /* Button shadow */
+}
+
+.reserved-button:hover {
+    -fx-background-color: #0056b3; /* Darker blue on hover */
+}
+
+
+
+/* Side BAR */
+.sidebar {
+    -fx-background-color: #222831; /* Dark gray background */
+    -fx-padding: 20px;
+    -fx-spacing: 20px; /* Space between elements */
+    -fx-alignment: center; /* Center all elements */
+}
+
+/* Sidebar Buttons */
+.sidebar-button {
+    -fx-background-color: #393e46; /* Slightly lighter gray */
+    -fx-text-fill: #ffffff; /* White text */
+    -fx-font-size: 14px;
+    -fx-padding: 10 20; /* Button padding */
+    -fx-background-radius: 8; /* Rounded corners */
+    -fx-border-color: #00adb5; /* Subtle accent color for border */
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #00adb5; /* Bright accent on hover */
+    -fx-text-fill: #222831; /* Dark text for hover */
+}
+
+/* Sign Out Button (Highlighted) */
+.sign-out-button {
+    -fx-background-color: #d9534f; /* Red for danger */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.sign-out-button:hover {
+    -fx-background-color: #c9302c; /* Darker red on hover */
+}
+
+/* Welcome Text */
+.sidebar-text {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff; /* White text for contrast */
+    -fx-alignment: center; /* Center align */
+}
