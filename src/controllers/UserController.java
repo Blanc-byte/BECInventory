@@ -687,7 +687,7 @@ public class UserController {
 
     
     private String readUserIdFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("/src/id.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("id.txt"))) {
             return reader.readLine();
         } catch (IOException e) {
             System.err.println("Error reading id.txt: " + e.getMessage());

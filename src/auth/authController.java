@@ -154,7 +154,7 @@ public class authController {
     }
     public void writeToFile(String userId, String username) throws Exception{
         // Define the path to the text file
-        String filePath = "/src/id.txt";  // Path to save the file (can be adjusted)
+        String filePath = "id.txt";  // Path to save the file (can be adjusted)
 
         // Prepare the data you want to write to the file
         String dataToWrite = userId;

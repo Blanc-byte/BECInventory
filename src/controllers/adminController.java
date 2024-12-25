@@ -153,7 +153,9 @@ public class adminController {
         int left = Integer.parseInt(availableStock) - Integer.parseInt(quantity.getText());
         java.sql.Statement statement = con.createStatement();
         statement.executeUpdate("UPDATE `equipments` SET `available`='"+left+"' WHERE id ='"+equipmentID+"'");
+        availSer.clear();
         getAvailSer(equipmentID);
+        
         for(int a=0; a<Integer.parseInt(quantity.getText()); a++){
             statement.executeUpdate("INSERT INTO `borrow`(`user_id`, `equipment_id`, `serial_id`) \n" +
                                     "VALUES ('"+usrID+"',"
@@ -581,6 +583,7 @@ public class adminController {
     }
     
     public void updateReservation(String quantity, String userid, String equipmentid, String reservationid)throws Exception{
+        availSer.clear();
         getAvailSer(equipmentid);
         java.sql.Statement statement = con.createStatement();
         for(int a=0; a<Integer.parseInt(quantity); a++){
@@ -602,13 +605,12 @@ public class adminController {
     
     ObservableList<String> availSer = FXCollections.observableArrayList();
     public void getAvailSer(String id)throws Exception{
-        
+        availSer.clear();
         java.sql.Statement statement = con.createStatement();
         System.out.println(id);
         ResultSet resultSet = statement.executeQuery(
         "SELECT * FROM serial WHERE status = 'available' AND equipment_id = '"+id+"'");
         while(resultSet.next()){
-            
             String i = resultSet.getString("id");
             availSer.add(i);
         }
@@ -850,7 +852,7 @@ public class adminController {
     }
     @FXML private Pane home, reservation, borrow, historyPane, equipmentsPane, logInPane, navigation;
     @FXML private Button homebtn, reservationbtn, borrowbtn, historybtn,equipmentbtn;
-
+    
     private void resetButtonStyles() {
         String defaultStyle = "-fx-background-color: transparent; -fx-text-fill: black;";
         homebtn.setStyle(defaultStyle);
@@ -874,6 +876,7 @@ public class adminController {
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
         loadBorrowersTable();
+        reset();
     }
 
     public void reservationClick() throws Exception{
@@ -886,6 +889,7 @@ public class adminController {
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
         loadReservationTable();
+        reset();
     }
 
     public void borrowClick() throws Exception{
@@ -898,6 +902,7 @@ public class adminController {
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
         loadEquipmentsTable();
+        reset();
     }
 
     public void historyClick() throws Exception{
@@ -910,6 +915,7 @@ public class adminController {
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
         loadHistoryTable();
+        reset();
     }
     public void equipmentsClick() throws Exception{
         resetButtonStyles();
@@ -921,6 +927,7 @@ public class adminController {
         userPane.setVisible(false);
         equipmentsPane.setVisible(true);
         loadEquipmentsTable2();
+        reset();
     }
     public void setDesign()throws Exception{
         homeClick();
@@ -1045,5 +1052,13 @@ public class adminController {
         historybtn.setContentDisplay(ContentDisplay.LEFT); 
         historybtn.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
         
+    }
+    public void reset(){
+        usersss.setText("");
+        quantity.setText("");
+        nameOfEquipment.setText("");
+        stocksAvailable.setText("");
+        add.setDisable(false);
+        save.setDisable(true);
     }
 }

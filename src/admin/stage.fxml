@@ -19,7 +19,7 @@
    <children>
       <Pane fx:id="navigation" prefHeight="400.0" prefWidth="150.0" style="-fx-background-color: white;" visible="false">
          <children>
-            <Button fx:id="homebtn" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#homeClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+            <Button fx:id="homebtn" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#homeClick" onMouseEntered="#setHover1" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
                <font>
                   <Font name="Bell MT Bold" size="13.0" />
                </font></Button>
