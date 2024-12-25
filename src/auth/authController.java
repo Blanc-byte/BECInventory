@@ -154,7 +154,7 @@ public class authController {
     }
     public void writeToFile(String userId, String username) throws Exception{
         // Define the path to the text file
-        String filePath = "C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/id.txt";  // Path to save the file (can be adjusted)
+        String filePath = "/src/id.txt";  // Path to save the file (can be adjusted)
 
         // Prepare the data you want to write to the file
         String dataToWrite = userId;
@@ -168,7 +168,7 @@ public class authController {
     }
     @FXML private TextField user, fname, mname, lname, suffix, schoolID, role;
     @FXML private PasswordField pass;
-    @FXML private ChoiceBox year,section, department, gender;
+    @FXML private ChoiceBox<String> year,section, department, gender;
     public boolean checkThe1stPhase()throws Exception{
         if(fname.getText().equals("") || lname.getText().equals("") || year.getValue()==null || section.getValue()==null || schoolID.getText().equals("")
                  || department.getValue()==null || gender.getValue()==null){
@@ -183,7 +183,7 @@ public class authController {
             return false;
         }
         if (!lname.getText().matches("[a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(null, "Lastzzz name must contain only letters, no numbers or special characters.");
+            JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
             return false;
         }
         if (!mname.getText().isEmpty() && !mname.getText().matches("[a-zA-Z]+")) {
@@ -198,6 +198,11 @@ public class authController {
         if (!schoolID.getText().matches("\\d{4}-\\d{4}")) {
             JOptionPane.showMessageDialog(null, "School ID must be in the format 0000-0000 (e.g., 1234-5678).");
             return false;
+        }
+        
+         if (gender.getValue() == null || gender.getValue().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please select a gender.");
+                return false;
         }
         return true;
     }
@@ -234,11 +239,13 @@ public class authController {
         String insertQuery = "INSERT INTO `users` (`fname`, `mname`, `lname`, `year_section`, `department`, `suffix`, `gender`, `school_id`, `username`, `password`, `role`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
        // java.sql.Statement statementq = con.createStatement();
        // statement.executeUpdate(insertQuery);
-       String yearSection = "";
+       String yearSection = "", departments = "";
        if(typeOfUser.equals("student")){
            yearSection = year.getValue()+""+section.getValue();
+           departments = department.getValue()+"";
        }else if(typeOfUser.equals("staff")){
            yearSection ="N/A";
+           departments = "N/A";
        }
 
        
@@ -247,7 +254,7 @@ public class authController {
             stmt.setString(2, mname.getText());
             stmt.setString(3, lname.getText());
             stmt.setString(4, yearSection);
-            stmt.setString(5, department.getValue()+"");
+            stmt.setString(5, departments);
             stmt.setString(6, suffix.getText() != null ? suffix.getText() : ""); // Handle null suffix
             stmt.setString(7, gender.getValue()+""); // Get selected value from ChoiceBox
             stmt.setString(8, schoolID.getText());

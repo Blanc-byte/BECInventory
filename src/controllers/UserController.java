@@ -522,14 +522,23 @@ public class UserController {
             return; // Stop execution if validation fails
         }
         
+        String yearSection = "", departments = "";
+        if(loggedInUser.getRole().equals("student")){
+           yearSection = yearEditField.getValue()+""+sectionEditField.getValue();
+           departments = depEditField.getValue();
+       }else if(loggedInUser.getRole().equals("staff")){
+           yearSection ="N/A";
+           departments = "N/A";
+       }
+        
          String updateQuery = "UPDATE `users` SET `fname`=?, `mname`=?, `lname`=?, `year_section`=?, `department`=?, `suffix`=?, `gender`=?, `school_id`=?, `username`=?, `password`=? WHERE id = ? ";
          try (PreparedStatement stmt = con.prepareStatement(updateQuery)) {
             
             stmt.setString(1, fnameField.getText());
             stmt.setString(2, mnameField.getText());
             stmt.setString(3, lastNameField.getText());
-            stmt.setString(4, yearEditField.getValue()+""+sectionEditField.getValue());
-            stmt.setString(5, depEditField.getValue());
+            stmt.setString(4, yearSection);
+            stmt.setString(5,departments);
             stmt.setString(6, suffixField.getText() != null ? suffixField.getText() : ""); // Handle null suffix
             stmt.setString(7, genderEditField.getValue()); // Get selected value from ChoiceBox
             stmt.setString(8, idEditField.getText());
@@ -553,6 +562,8 @@ public class UserController {
     }
 
     private boolean validateFields() {
+        
+        User loggedInUser = fetchLoggedInUser();
         // Check if required fields are empty
         if (fnameField.getText().isEmpty() || lastNameField.getText().isEmpty() ||
              idEditField.getText().isEmpty() || usernameEditField.getText().isEmpty()) {
@@ -576,26 +587,29 @@ public class UserController {
             JOptionPane.showMessageDialog(null, "Suffix must contain only letters, no numbers or special characters.");
             return false;
         }
-
-        // Check if gender is selected
+        
         if (genderEditField.getValue() == null || genderEditField.getValue().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select a gender.");
-            return false;
+                JOptionPane.showMessageDialog(null, "Please select a gender.");
+                return false;
         }
-        // Check if year is selected
-        if (yearEditField.getValue() == null || yearEditField.getValue().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select Year.");
-            return false;
-        }
-        // Check if section is selected
-        if (sectionEditField.getValue() == null || sectionEditField.getValue().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select Section.");
-            return false;
-        }
-        // Check if section is selected
-        if (depEditField.getValue() == null || depEditField.getValue().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select Course.");
-            return false;
+
+        if(!loggedInUser.getRole().equals("staff")){
+            
+            // Check if year is selected
+            if (yearEditField.getValue() == null || yearEditField.getValue().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please select Year.");
+                return false;
+            }
+            // Check if section is selected
+            if (sectionEditField.getValue() == null || sectionEditField.getValue().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please select Section.");
+                return false;
+            }
+            // Check if section is selected
+            if (depEditField.getValue() == null || depEditField.getValue().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Please select Course.");
+                return false;
+            }
         }
 
         // Optional: Validate numeric fields (e.g., school ID)
@@ -673,7 +687,7 @@ public class UserController {
 
     
     private String readUserIdFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/id.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("/src/id.txt"))) {
             return reader.readLine();
         } catch (IOException e) {
             System.err.println("Error reading id.txt: " + e.getMessage());
@@ -724,9 +738,10 @@ public class UserController {
     }
     
     @FXML private TextField userNameField, idField, genderField, departmentField, yearField;
+    @FXML private Label depLabel, yearLabel;
     public void loadUser() {
          User loggedInUser = fetchLoggedInUser();
-        if (loggedInUser != null) {
+        if (loggedInUser != null && loggedInUser.getRole().equals("student")) {
             nameLabel.setText("Welcome, "+ loggedInUser.getFname());
             userNameField.setText(loggedInUser.getFname()+" "+loggedInUser.getMname()+" "+loggedInUser.getLname()+" "+loggedInUser.getSuffix());
             idField.setText(loggedInUser.getSchoolId());
@@ -735,8 +750,15 @@ public class UserController {
             yearField.setText(loggedInUser.getYearSection());
             passwordField.setText("");
             confirmPasswordField.setText("");
-        } else {
-            System.out.println("No user is logged in.");
+        } else if(loggedInUser != null && loggedInUser.getRole().equals("staff")) {
+            nameLabel.setText("Welcome, "+ loggedInUser.getFname());
+            userNameField.setText(loggedInUser.getFname()+" "+loggedInUser.getMname()+" "+loggedInUser.getLname()+" "+loggedInUser.getSuffix());
+            idField.setText(loggedInUser.getSchoolId());
+            genderField.setText(loggedInUser.getGender());
+            departmentField.setVisible(false);
+            yearField.setVisible(false);
+            depLabel.setVisible(false);
+            yearLabel.setVisible(false);
         }
     }
     
@@ -752,7 +774,29 @@ public class UserController {
             
             String yearSection = loggedInUser.getYearSection(); 
             String year = yearSection.replaceAll("[^0-9]", ""); 
-            String section = yearSection.replaceAll("[^A-Za-z]", "");     
+            String section = yearSection.replaceAll("[^A-Za-z]", "");
+            
+            if(loggedInUser.getRole().equals("staff")){
+                 depEditField.setDisable(true);
+                 sectionEditField.setDisable(true);
+                 yearEditField.setDisable(true);
+            }else {
+                if (loggedInUser.getDepartment() != null && courses.contains(loggedInUser.getDepartment())) {
+                depEditField.setValue(loggedInUser.getDepartment()); // Display the fetched gender
+                } else {
+                    depEditField.setValue("BSIT"); // Default value if none is found
+                }
+
+                if ((loggedInUser.getYearSection() != null && sections.contains(section)) && loggedInUser.getYearSection() != null && years.contains(year) ) {
+                    sectionEditField.setValue(section);
+                    yearEditField.setValue(year);
+
+                } else {
+                    sectionEditField.setValue("A"); 
+                    yearEditField.setValue("1");
+                }
+            }
+
             
             if (loggedInUser.getGender() != null && genders.contains(loggedInUser.getGender())) {
             genderEditField.setValue(loggedInUser.getGender()); // Display the fetched gender
@@ -760,20 +804,6 @@ public class UserController {
                 genderEditField.setValue("Male"); // Default value if none is found
             }
             
-            if (loggedInUser.getDepartment() != null && courses.contains(loggedInUser.getDepartment())) {
-                depEditField.setValue(loggedInUser.getDepartment()); // Display the fetched gender
-            } else {
-                depEditField.setValue("BSIT"); // Default value if none is found
-            }
-            
-            if ((loggedInUser.getYearSection() != null && sections.contains(section)) && loggedInUser.getYearSection() != null && years.contains(year) ) {
-                sectionEditField.setValue(section);
-                yearEditField.setValue(year);
-            
-            } else {
-                sectionEditField.setValue("A"); 
-                yearEditField.setValue("1");
-            }
             
             idEditField.setText(loggedInUser.getSchoolId()+"");
             usernameEditField.setText(loggedInUser.getUsername()+"");
