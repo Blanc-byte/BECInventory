@@ -582,7 +582,6 @@ public class adminController {
     
     public void updateReservation(String quantity, String userid, String equipmentid, String reservationid)throws Exception{
         getAvailSer(equipmentid);
-        
         java.sql.Statement statement = con.createStatement();
         for(int a=0; a<Integer.parseInt(quantity); a++){
             statement.executeUpdate("INSERT INTO `borrow`(`user_id`, `equipment_id`, `serial_id`) \n" +
@@ -605,9 +604,11 @@ public class adminController {
     public void getAvailSer(String id)throws Exception{
         
         java.sql.Statement statement = con.createStatement();
+        System.out.println(id);
         ResultSet resultSet = statement.executeQuery(
         "SELECT * FROM serial WHERE status = 'available' AND equipment_id = '"+id+"'");
         while(resultSet.next()){
+            
             String i = resultSet.getString("id");
             availSer.add(i);
         }
@@ -805,6 +806,7 @@ public class adminController {
             
         }
     }
+    
     
     ObservableList<BorrowedEquipments> filteredHistory = FXCollections.observableArrayList();
     public void searchMeHistory(){

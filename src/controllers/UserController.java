@@ -63,66 +63,61 @@ public class UserController {
     @FXML
     private void initialize() throws Exception {
         connect();
-        // Load every data fetch in database
         loadData();
-        
+        setupInitialUI();
+    }
+    
+    private void setupInitialUI() {
         reserve.setVisible(true);
         itemTablePane.setVisible(true);
         itemReserveTablePane.setVisible(false);
         borrow.setVisible(false);
         profile.setVisible(false);
-        
         genderEditField.setItems(genders);
-        updateStackPane(borrowStack, "/icons/borrow.png", countStatus("borrow")); 
-        updateStackPane(reserveStack, "/icons/reserve.png", countStatus("reserve"));
+        yearEditField.setItems(years);
+        sectionEditField.setItems(sections);
+        depEditField.setItems(courses);
     }
 
     @FXML
     private void reserveClick() throws Exception{
         loadData();
-        reserve.setVisible(true);
+        togglePaneVisibility(true, false, false);
         itemTablePane.setVisible(true);
         itemReserveTablePane.setVisible(false);
         reserveListButton.setText("Reserved");
-        borrow.setVisible(false);
-        profile.setVisible(false);
     }
 
     @FXML
     private void BorrowClick() throws Exception{
         loadData();
-        reserve.setVisible(false);
-        profile.setVisible(false);
-        borrow.setVisible(true);
+        togglePaneVisibility(false, true, false);
     }
     
     @FXML 
     private void profileClick() throws Exception{
         loadData();
-        reserve.setVisible(false);
-        borrow.setVisible(false);
-        profile.setVisible(true);
+        togglePaneVisibility(false, false, true);
         profilePane.setVisible(true);
         editProfilePane.setVisible(false);
         updateStackPane(borrowStack, "/icons/borrow.png", countStatus("borrow")); // Example: 5 items borrowed
         updateStackPane(reserveStack, "/icons/reserve.png", countStatus("reserve")); // Example: 3 items reserved
     }
     
+     private void togglePaneVisibility(boolean reserveVisible, boolean borrowVisible, boolean profileVisible) {
+        reserve.setVisible(reserveVisible);
+        borrow.setVisible(borrowVisible);
+        profile.setVisible(profileVisible);
+    }
+    
     @FXML
     private void reserveListClick() throws Exception {
-       if (reserveListButton.getText().equals("Reserved")) {
-          itemTablePane.setVisible(false);
-          itemReserveTablePane.setVisible(true);
-          reserveListButton.setText("Available");
-          info.setText("Currently Reserved Items");
-        }
-       else if(reserveListButton.getText().equals("Available")){
-          itemTablePane.setVisible(true);
-          itemReserveTablePane.setVisible(false);
-          reserveListButton.setText("Reserved");
-          info.setText("Available Items to be Borrowed");
-       }
-
+        boolean isReserved = "Reserved".equals(reserveListButton.getText());
+        reserveListButton.setText(isReserved ? "Available" : "Reserved");
+        info.setText(isReserved ? "Currently Reserved Items" : "Available Items to be Borrowed");
+        itemTablePane.setVisible(!isReserved);
+        itemReserveTablePane.setVisible(isReserved);
+        loadData();
     }
     
     @FXML
@@ -133,26 +128,25 @@ public class UserController {
         setEditProfileField();
     }
     
-    @FXML
+     @FXML
     private void logOut(ActionEvent event) throws IOException {
+        switchToLoginScene(event);
+        clearLoginData();
+    }
+
+    private void switchToLoginScene(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/auth/auth.fxml"));
-                        Parent root = loader.load();
+        Parent root = loader.load();
+        Stage newStage = new Stage();
+        newStage.setScene(new Scene(root));
+        newStage.show();
+        ((Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow()).close();
+    }
 
-                        Stage newStage = new Stage();
-                        newStage.setScene(new Scene(root));
-                        newStage.show();
-                        Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-                        currentStage.close();
-
-                        String filePath = "C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/id.txt";
-                        String dataToWrite = "";
-
-                        // Write to the file
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false));
-                        writer.write(dataToWrite);
-                        System.out.println("Login data written to file successfully.");
-                        writer.close();
-                        
+    private void clearLoginData() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("id.txt"))) {
+            writer.write("");
+        }
     }
     
     
@@ -439,23 +433,22 @@ public class UserController {
         loadRequestsToReserve();
         loadRequestsToBorrow();
         loadUser();
+        updateStackPane(borrowStack, "/icons/borrow.png", countStatus("borrow")); 
+        updateStackPane(reserveStack, "/icons/reserve.png", countStatus("reserve"));
     }
     
     private void reserveEquipment(equipmentModel equipment){
         String equipmentId = equipment.getId();
         String equipmentName = equipment.getName();
         String quantityStr = JOptionPane.showInputDialog("Enter the quantity to reserve:");
-//        if (quantityStr == null || quantityStr.trim().isEmpty()) {
-//            JOptionPane.showMessageDialog(null, "Quantity cannot be empty!");
-//            return; // If user cancels or enters an empty quantity, exit the method
-//        }
+        
             if (quantityStr == null) {
-                return; // Exit the method if the user cancels the input
+                return;
             }
 
             if (quantityStr.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Quantity cannot be empty!");
-                return; // Exit the method if the quantity is empty
+                return; 
             }
         // Validate if the quantity is a valid integer
         int quantity;
@@ -481,41 +474,45 @@ public class UserController {
     
     // Method to update the database with the reservation details
     private void updateDatabaseWithReservation(String equipmentId, String equipmentName, int quantity) {
-        
         User loggedInUser = fetchLoggedInUser();
-        String updateQuery = "UPDATE equipments SET available = available - ? WHERE id = ?";
+        String updateQuery = "UPDATE equipments " +
+                             "SET available = available - ? " +
+                             "WHERE id = ? AND available >= ?";
         String insertReserveQuery = "INSERT INTO reservation (user_id, equipment_id, quantity) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmt = con.prepareStatement(updateQuery)) {
-            stmt.setInt(1, quantity);  // Set the quantity to reduce from available stock
-            stmt.setString(2, equipmentId);  // Set the equipment ID
+            stmt.setInt(1, quantity);       
+            stmt.setString(2, equipmentId); 
+            stmt.setInt(3, quantity);   
 
-            int rowsUpdated = stmt.executeUpdate();  // Execute the update
+            // Execute the update
+            int rowsUpdated = stmt.executeUpdate();
 
             if (rowsUpdated > 0) {
                 JOptionPane.showMessageDialog(null, "Successfully reserved " + quantity + " of Equipment: " + equipmentName);
-                
-                // Insert into reserve table
+
                 try (PreparedStatement insertStmt = con.prepareStatement(insertReserveQuery)) {
-                    insertStmt.setString(1, loggedInUser.getId());  // Borrower's name
-                    insertStmt.setString(2, equipmentId);  // Equipment name
-                    insertStmt.setInt(3, quantity);  // Quantity reserved
-                    insertStmt.executeUpdate();  // Execute the insert
+                    insertStmt.setString(1, loggedInUser.getId());
+                    insertStmt.setString(2, equipmentId);     
+                    insertStmt.setInt(3, quantity);            
+                    insertStmt.executeUpdate();                   
                 }
-                
-                // Clear Tables            
+
+                // Update UI or reload tables
                 equipmentTable.getItems().clear();
-                loadRequestsToTable();
                 itemReservedTable.getItems().clear();
-                loadRequestsToReserve();
-                
+                loadData();
+
             } else {
-                JOptionPane.showMessageDialog(null, "No equipment found ");
+                // If no rows were updated, it means insufficient stock
+                JOptionPane.showMessageDialog(null, "The item you tried to reserve is no longer available in the requested quantity.");
+                loadData();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error reserving equipment: " + e.getMessage());
         }
     }
+
     
     @FXML
     private void updateUserDatabase() {
@@ -531,8 +528,8 @@ public class UserController {
             stmt.setString(1, fnameField.getText());
             stmt.setString(2, mnameField.getText());
             stmt.setString(3, lastNameField.getText());
-            stmt.setString(4, yearSectionFIeld.getText());
-            stmt.setString(5, departmentEditField.getText());
+            stmt.setString(4, yearEditField.getValue()+""+sectionEditField.getValue());
+            stmt.setString(5, depEditField.getValue());
             stmt.setString(6, suffixField.getText() != null ? suffixField.getText() : ""); // Handle null suffix
             stmt.setString(7, genderEditField.getValue()); // Get selected value from ChoiceBox
             stmt.setString(8, idEditField.getText());
@@ -558,7 +555,6 @@ public class UserController {
     private boolean validateFields() {
         // Check if required fields are empty
         if (fnameField.getText().isEmpty() || lastNameField.getText().isEmpty() ||
-            yearSectionFIeld.getText().isEmpty() || departmentEditField.getText().isEmpty()  ||
              idEditField.getText().isEmpty() || usernameEditField.getText().isEmpty()) {
              JOptionPane.showMessageDialog(null, "Please fill in all required fields.");
             return false;
@@ -572,23 +568,33 @@ public class UserController {
             JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
             return false;
         }
-        if (!mnameField.getText().matches("[a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(null, "Last name must contain only letters, no numbers or special characters.");
+        if (!mnameField.getText().isEmpty() && !mnameField.getText().matches("[a-zA-Z]+")) {
+            JOptionPane.showMessageDialog(null, "middle name must contain only letters, no numbers or special characters.");
             return false;
         }
         if (!suffixField.getText().isEmpty() && !suffixField.getText().matches("[a-zA-Z]+")) {
             JOptionPane.showMessageDialog(null, "Suffix must contain only letters, no numbers or special characters.");
             return false;
         }
-        if (!departmentEditField.getText().matches("[a-zA-Z]+")) {
-            JOptionPane.showMessageDialog(null, "Department must contain only letters, no numbers or special characters.");
-            return false;
-        }
 
         // Check if gender is selected
         if (genderEditField.getValue() == null || genderEditField.getValue().isEmpty()) {
-            System.out.println("Please select a gender.");
             JOptionPane.showMessageDialog(null, "Please select a gender.");
+            return false;
+        }
+        // Check if year is selected
+        if (yearEditField.getValue() == null || yearEditField.getValue().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please select Year.");
+            return false;
+        }
+        // Check if section is selected
+        if (sectionEditField.getValue() == null || sectionEditField.getValue().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please select Section.");
+            return false;
+        }
+        // Check if section is selected
+        if (depEditField.getValue() == null || depEditField.getValue().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please select Course.");
             return false;
         }
 
@@ -734,8 +740,8 @@ public class UserController {
         }
     }
     
-    @FXML private TextField fnameField, mnameField, lastNameField, suffixField, departmentEditField, yearSectionFIeld, idEditField, usernameEditField, passwordField, confirmPasswordField;
-    @FXML private ChoiceBox<String> genderEditField;
+    @FXML private TextField fnameField, mnameField, lastNameField, suffixField, idEditField, usernameEditField, passwordField, confirmPasswordField;
+    @FXML private ChoiceBox<String> genderEditField, sectionEditField, yearEditField, depEditField;
     public void setEditProfileField() {
         User loggedInUser = fetchLoggedInUser();
         if (loggedInUser != null) {
@@ -743,15 +749,34 @@ public class UserController {
             mnameField.setText(loggedInUser.getMname()+"");
             lastNameField.setText(loggedInUser.getLname()+"");
             suffixField.setText(loggedInUser.getSuffix()+"");
+            
+            String yearSection = loggedInUser.getYearSection(); 
+            String year = yearSection.replaceAll("[^0-9]", ""); 
+            String section = yearSection.replaceAll("[^A-Za-z]", "");     
+            
             if (loggedInUser.getGender() != null && genders.contains(loggedInUser.getGender())) {
             genderEditField.setValue(loggedInUser.getGender()); // Display the fetched gender
-        } else {
-            genderEditField.setValue("Male"); // Default value if none is found
-        }
+            } else {
+                genderEditField.setValue("Male"); // Default value if none is found
+            }
+            
+            if (loggedInUser.getDepartment() != null && courses.contains(loggedInUser.getDepartment())) {
+                depEditField.setValue(loggedInUser.getDepartment()); // Display the fetched gender
+            } else {
+                depEditField.setValue("BSIT"); // Default value if none is found
+            }
+            
+            if ((loggedInUser.getYearSection() != null && sections.contains(section)) && loggedInUser.getYearSection() != null && years.contains(year) ) {
+                sectionEditField.setValue(section);
+                yearEditField.setValue(year);
+            
+            } else {
+                sectionEditField.setValue("A"); 
+                yearEditField.setValue("1");
+            }
+            
             idEditField.setText(loggedInUser.getSchoolId()+"");
             usernameEditField.setText(loggedInUser.getUsername()+"");
-            departmentEditField.setText(loggedInUser.getDepartment()+"");
-            yearSectionFIeld.setText(loggedInUser.getYearSection()+"");
         } else {
             System.out.println("No user is logged in.");
         }
@@ -780,15 +805,6 @@ public class UserController {
         // Position the badge at the top-right corner
         StackPane.setMargin(badge, new Insets(-10, -10, 0, 0)); // Adjust positioning
         StackPane.setAlignment(badge, Pos.TOP_RIGHT); // Top-right alignment
-    }
-
-    // Example method to update counts dynamically
-    public void setBorrowCount(int count) {
-        updateStackPane(borrowStack, "/icons/borrow.png", count);
-    }
-
-    public void setReserveCount(int count) {
-        updateStackPane(reserveStack, "/icons/reserve.png", count);
     }
     
    public Integer countStatus(String whois) {

@@ -40,7 +40,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="borrow" layoutX="150.0" layoutY="3.0" prefHeight="400.0" prefWidth="550.0">
+      <Pane fx:id="borrow" layoutX="150.0" layoutY="3.0" prefHeight="400.0" prefWidth="550.0" visible="false">
          <children>
             <Pane layoutX="13.0" prefHeight="56.0" prefWidth="525.0" styleClass="header-section" stylesheets="@../css/reserve.css">
                <children>
@@ -118,7 +118,7 @@
             <Separator layoutX="389.0" layoutY="92.0" prefHeight="3.0" prefWidth="126.0" />
          </children>
       </Pane>
-      <Pane fx:id="profile" layoutX="150.0" layoutY="-14.0" prefHeight="400.0" prefWidth="550.0" stylesheets="@../css/style.css" visible="false">
+      <Pane fx:id="profile" layoutX="150.0" layoutY="-14.0" prefHeight="400.0" prefWidth="550.0" stylesheets="@../css/style.css">
          <children>
             <Pane fx:id="profilePane" layoutY="114.0" prefHeight="288.0" prefWidth="550.0" visible="false">
                <children>
@@ -218,40 +218,46 @@
                               <Font name="Berlin Sans FB" size="13.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Gender" GridPane.rowIndex="4">
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Username" GridPane.rowIndex="4">
                            <font>
                               <Font name="Berlin Sans FB" size="13.0" />
                            </font>
                         </Label>
                         <TextField fx:id="fnameField" GridPane.columnIndex="1" />
                         <TextField fx:id="mnameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ChoiceBox fx:id="genderEditField" prefHeight="26.0" prefWidth="103.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Department" GridPane.columnIndex="2">
+                        <ChoiceBox fx:id="genderEditField" prefHeight="26.0" prefWidth="103.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="School-ID" GridPane.columnIndex="2">
                            <font>
                               <Font name="Berlin Sans FB" size="13.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Year &amp; Section" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Year" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font name="Berlin Sans FB" size="13.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="departmentEditField" GridPane.columnIndex="3" />
-                        <TextField fx:id="yearSectionFIeld" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                         <TextField fx:id="lastNameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="School-ID" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Department" GridPane.columnIndex="2" GridPane.rowIndex="3">
                            <font>
                               <Font name="Berlin Sans FB" size="13.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="idEditField" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Username" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Gender" GridPane.columnIndex="2" GridPane.rowIndex="4">
                            <font>
                               <Font name="Berlin Sans FB" size="13.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="usernameEditField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                         <TextField fx:id="suffixField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label alignment="CENTER" prefHeight="42.0" prefWidth="123.0" text="Section" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="Berlin Sans FB" size="13.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="sectionEditField" prefHeight="26.0" prefWidth="103.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="yearEditField" prefHeight="26.0" prefWidth="103.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <ChoiceBox fx:id="depEditField" prefHeight="26.0" prefWidth="103.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="idEditField" GridPane.columnIndex="3" />
+                        <TextField fx:id="usernameEditField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
                   <Separator layoutX="15.0" layoutY="192.0" prefHeight="3.0" prefWidth="160.0" />

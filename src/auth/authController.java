@@ -170,8 +170,7 @@ public class authController {
     @FXML private PasswordField pass;
     @FXML private ChoiceBox year,section, department, gender;
     public boolean checkThe1stPhase()throws Exception{
-        if(fname.getText().equals("") || mname.getText().equals("") || lname.getText().equals("") ||
-           suffix.getText().equals("") || year.getValue()==null || section.getValue()==null || schoolID.getText().equals("")
+        if(fname.getText().equals("") || lname.getText().equals("") || year.getValue()==null || section.getValue()==null || schoolID.getText().equals("")
                  || department.getValue()==null || gender.getValue()==null){
             if(typeOfUser.equals("student")) {
                     JOptionPane.showMessageDialog(null, "FILL IN ALL THE INFORMATION BEFORE PROCEEDING");
@@ -193,6 +192,11 @@ public class authController {
         }
         if (!suffix.getText().isEmpty() && !suffix.getText().matches("[a-zA-Z]+")) {
             JOptionPane.showMessageDialog(null, "Suffix must contain only letters, no numbers or special characters.");
+            return false;
+        }
+        
+        if (!schoolID.getText().matches("\\d{4}-\\d{4}")) {
+            JOptionPane.showMessageDialog(null, "School ID must be in the format 0000-0000 (e.g., 1234-5678).");
             return false;
         }
         return true;
