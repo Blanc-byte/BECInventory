@@ -144,7 +144,7 @@ public class UserController {
     }
 
     private void clearLoginData() throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("id.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/auth/id.txt"))) {
             writer.write("");
         }
     }
@@ -673,7 +673,7 @@ public class UserController {
 
     
     private String readUserIdFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/id.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/auth/id.txt"))) {
             return reader.readLine();
         } catch (IOException e) {
             System.err.println("Error reading id.txt: " + e.getMessage());

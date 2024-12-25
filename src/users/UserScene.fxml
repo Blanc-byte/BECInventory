@@ -174,7 +174,7 @@
             <Pane layoutX="13.0" layoutY="16.0" prefHeight="64.0" prefWidth="525.0" styleClass="header-section" stylesheets="@../css/reserve.css">
                <children>
                   <Separator layoutX="131.0" layoutY="9.0" orientation="VERTICAL" prefHeight="36.0" prefWidth="4.0" />
-                  <Label layoutX="14.0" layoutY="17.0" prefHeight="17.0" prefWidth="96.0" styleClass="header-title" stylesheets="@../css/reserve.css" text="Profile" />
+                  <Label layoutX="40.0" layoutY="22.0" prefHeight="16.0" prefWidth="51.0" styleClass="header-title" stylesheets="@../css/reserve.css" text="Profile" />
                   <StackPane fx:id="borrowStack" layoutX="337.0" layoutY="8.0" prefHeight="42.0" prefWidth="56.0" />
                   <StackPane fx:id="reserveStack" layoutX="430.0" layoutY="8.0" prefHeight="42.0" prefWidth="56.0" />
                   <Label layoutX="346.0" layoutY="39.0" text="Borrowed" />
