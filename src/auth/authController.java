@@ -279,15 +279,17 @@ public class authController {
     public void signUpShowInternal()throws Exception{
         signUp.setVisible(true);
         typeOf.setVisible(false);
+        department.setDisable(false);
+        section.setDisable(false);
+        year.setDisable(false);
         typeOfUser = "student";
     }
     public void signUpShowExternal()throws Exception{
         signUp.setVisible(true);
         typeOf.setVisible(false);
-        department.setDisable(false);
+        department.setDisable(true);
         section.setDisable(true);
         year.setDisable(true);
-//        schoolID.setDisable(true);
         typeOfUser = "staff";
     }
     public void signUp2ndPhaseShow()throws Exception{

@@ -162,10 +162,10 @@ public class UserController {
     ObservableList<String> courses = FXCollections.observableArrayList("BSIT", "BSBA", "BSA", "BTLEd");
     
     public void search() {
-        if(reserveListButton.getText().equals("Reserved Items")){
+        if(reserveListButton.getText().equals("Reserved")){
           searchMeEquipment();
         }
-        else if(reserveListButton.getText().equals("Available Items")){
+        else if(reserveListButton.getText().equals("Available")){
           searchMeReservation();
         }
     }
