@@ -3,22 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/models/reservation.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/auth/authController.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/controllers/adminController.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/models/equipmentModel.java</file>
-            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/BECInventory/src/main.java</file>
-=======
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/becinventory/BECInventory.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/controllers/controller.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/auth/authController.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/models/model.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/main.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/controllers/UserController.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/admin/admin.java</file>
-            <file>file:/C:/Users/estal/Documents/NetBeansProjects/mavenproject1/BECInventory/src/models/User.java</file>
->>>>>>> 31f0fb7cb5d5826751cdadedf8fb36a5f2ca4820
+            <file>file:/C:/Users/Leonardo%20Gabito/Documents/NetBeansProjects/BECInventory/src/models/serialModel.java</file>
+            <file>file:/C:/Users/Leonardo%20Gabito/Documents/NetBeansProjects/BECInventory/src/controllers/adminController.java</file>
+            <file>file:/C:/Users/Leonardo%20Gabito/Documents/NetBeansProjects/BECInventory/src/main.java</file>
+            <file>file:/C:/Users/Leonardo%20Gabito/Documents/NetBeansProjects/BECInventory/src/models/borrowModel.java</file>
         </group>
     </open-files>
 </project-private>

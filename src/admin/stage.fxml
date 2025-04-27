@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
@@ -15,41 +16,41 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.adminController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.adminController">
    <children>
-      <Pane fx:id="navigation" prefHeight="400.0" prefWidth="150.0" style="-fx-background-color: white;" visible="false">
+      <Pane fx:id="navigation" prefHeight="592.0" prefWidth="150.0" style="-fx-background-color: white;">
          <children>
-            <Button fx:id="homebtn" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#homeClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+            <Button fx:id="homebtn" layoutX="10.0" layoutY="222.0" mnemonicParsing="false" onAction="#homeClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: black;">
                <font>
                   <Font name="Bell MT Bold" size="13.0" />
                </font></Button>
-            <Button fx:id="reservationbtn" layoutX="10.0" layoutY="160.0" mnemonicParsing="false" onAction="#reservationClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+            <Button fx:id="reservationbtn" layoutX="10.0" layoutY="481.0" mnemonicParsing="false" onAction="#reservationClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
                <font>
                   <Font name="Bell MT Bold" size="13.0" />
                </font></Button>
-            <Button fx:id="historybtn" layoutX="10.0" layoutY="250.0" mnemonicParsing="false" onAction="#historyClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+            <Button fx:id="historybtn" layoutX="10.0" layoutY="312.0" mnemonicParsing="false" onAction="#historyClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: black;">
                <font>
                   <Font name="Bell MT Bold" size="13.0" />
                </font></Button>
-            <Button fx:id="borrowbtn" layoutX="10.0" layoutY="190.0" mnemonicParsing="false" onAction="#borrowClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+            <Button fx:id="borrowbtn" layoutX="10.0" layoutY="252.0" mnemonicParsing="false" onAction="#borrowClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: black;">
                <font>
                   <Font name="Bell MT Bold" size="13.0" />
                </font></Button>
-            <Button fx:id="equipmentbtn" layoutX="10.0" layoutY="220.0" mnemonicParsing="false" onAction="#equipmentsClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white;">
+            <Button fx:id="equipmentbtn" layoutX="10.0" layoutY="282.0" mnemonicParsing="false" onAction="#equipmentsClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: black;">
                <font>
                   <Font name="Bell MT Bold" size="13.0" />
                </font>
             </Button>
-            <ImageView fitHeight="57.0" fitWidth="65.0" layoutX="42.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="57.0" fitWidth="65.0" layoutX="42.0" layoutY="141.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../icons/admin.png" />
                </image>
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="home" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+      <Pane fx:id="home" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
-            <TableView fx:id="borrowersTable" layoutX="15.0" layoutY="184.0" prefHeight="200.0" prefWidth="720.0">
+            <TableView fx:id="borrowersTable" layoutX="15.0" layoutY="184.0" prefHeight="391.0" prefWidth="720.0">
               <columns>
                 <TableColumn fx:id="c1" prefWidth="166.0" text="Name" />
                 <TableColumn fx:id="c2" prefWidth="47.0" text="Course" />
@@ -63,7 +64,7 @@
               </columns>
             </TableView>
             <TextField fx:id="search" layoutX="15.0" layoutY="152.0" onKeyReleased="#searchMe" prefHeight="25.0" prefWidth="300.0" />
-            <Pane layoutY="33.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
                <children>
                   <Label layoutX="14.0" layoutY="19.0" text="HOME">
                      <font>
@@ -105,9 +106,9 @@
             </Pane>
          </children>
       </Pane>
-      <Pane fx:id="reservation" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+      <Pane fx:id="reservation" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
-            <TableView fx:id="reservationTable" layoutX="15.0" layoutY="57.0" prefHeight="200.0" prefWidth="720.0">
+            <TableView fx:id="reservationTable" layoutX="16.0" layoutY="171.0" prefHeight="407.0" prefWidth="720.0">
               <columns>
                 <TableColumn prefWidth="158.0" text="Name" fx:id="x1" />
                 <TableColumn prefWidth="93.0" text="Department" fx:id="x2" />
@@ -119,10 +120,10 @@
                   <TableColumn prefWidth="87.0" fx:id="x8" />
               </columns>
             </TableView>
-            <TextField fx:id="searchReservation" layoutX="14.0" layoutY="22.0" onKeyReleased="#searchMeReservation" prefHeight="25.0" prefWidth="300.0" />
-            <Pane layoutY="283.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
+            <TextField fx:id="searchReservation" layoutX="15.0" layoutY="136.0" onKeyReleased="#searchMeReservation" prefHeight="25.0" prefWidth="300.0" />
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
                <children>
-                  <Label layoutX="578.0" layoutY="19.0" text="RESERVATION">
+                  <Label layoutX="14.0" layoutY="19.0" text="RESERVATION">
                      <font>
                         <Font name="Agency FB Bold" size="34.0" />
                      </font>
@@ -162,21 +163,21 @@
             </Pane>
          </children>
       </Pane>
-      <Pane fx:id="borrow" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+      <Pane fx:id="borrow" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
-            <TableView fx:id="borrowsTable" layoutX="14.0" layoutY="68.0" prefHeight="300.0" prefWidth="592.0">
+            <TableView fx:id="borrowsTable" layoutX="14.0" layoutY="178.0" prefHeight="400.0" prefWidth="714.0">
               <columns>
-                <TableColumn fx:id="z1" prefWidth="173.0" text="Name" />
-                <TableColumn fx:id="z2" prefWidth="63.0" text="Stock" />
-                  <TableColumn fx:id="z3" prefWidth="65.0" text="Available" />
-                  <TableColumn fx:id="z4" prefWidth="189.0" text="Date Added" />
-                  <TableColumn fx:id="z5" prefWidth="83.0" />
+                <TableColumn fx:id="z1" prefWidth="236.79995727539062" text="Name" />
+                <TableColumn fx:id="z2" prefWidth="90.4000244140625" text="Stock" />
+                  <TableColumn fx:id="z3" prefWidth="75.99996948242188" text="Available" />
+                  <TableColumn fx:id="z4" prefWidth="236.800048828125" text="Date Added" />
+                  <TableColumn fx:id="z5" minWidth="0.0" prefWidth="68.0" />
               </columns>
             </TableView>
-            <TextField fx:id="searchEquipment" layoutX="14.0" layoutY="32.0" onKeyReleased="#searchMeEquipments" prefHeight="25.0" prefWidth="300.0" />
-            <Pane layoutX="625.0" prefHeight="400.0" prefWidth="80.0" style="-fx-background-color: white;">
+            <TextField fx:id="searchEquipment" layoutX="14.0" layoutY="146.0" onKeyReleased="#searchMeEquipments" prefHeight="25.0" prefWidth="300.0" />
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
                <children>
-                  <Label layoutX="31.0" prefHeight="260.0" prefWidth="19.0" text="BORROW" wrapText="true">
+                  <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="19.0" prefHeight="16.0" prefWidth="241.0" text="BORROW" wrapText="true">
                      <font>
                         <Font name="Agency FB Bold" size="34.0" />
                      </font>
@@ -216,9 +217,9 @@
             </Pane>
          </children>
       </Pane>
-      <Pane fx:id="userPane" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" style="-fx-background-color: #99dbd3;" visible="false">
+      <Pane fx:id="userPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" style="-fx-background-color: #99dbd3;" visible="false">
          <children>
-            <TableView fx:id="userTable" layoutX="16.0" layoutY="75.0" prefHeight="176.0" prefWidth="720.0">
+            <TableView fx:id="userTable" layoutX="16.0" layoutY="75.0" prefHeight="497.0" prefWidth="720.0">
               <columns>
                 <TableColumn fx:id="a1" prefWidth="92.0" text="Fname" />
                 <TableColumn fx:id="a2" prefWidth="57.0" text="Mname" />
@@ -231,56 +232,13 @@
               </columns>
             </TableView>
             <TextField fx:id="searchUser" layoutX="15.0" layoutY="43.0" onKeyReleased="#searchMeUsers" prefHeight="25.0" prefWidth="287.0" />
-            <TextField fx:id="quantity" layoutX="333.0" layoutY="307.0" onKeyReleased="#handleQuantityInput" prefHeight="25.0" prefWidth="174.0" />
-            <Label layoutX="264.0" layoutY="308.0" text="Quantity">
-               <font>
-                  <Font name="Agency FB Bold" size="20.0" />
-               </font>
-               <textFill>
-                  <LinearGradient endX="1.0" endY="1.0">
-                     <stops>
-                        <Stop>
-                           <color>
-                              <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
-                           </color>
-                        </Stop>
-                        <Stop offset="1.0">
-                           <color>
-                              <Color red="0.843137264251709" green="1.0" blue="0.929411768913269" />
-                           </color>
-                        </Stop>
-                     </stops>
-                  </LinearGradient>
-               </textFill>
-            </Label>
-            <Label layoutX="263.0" layoutY="270.0" text="Selected">
-               <font>
-                  <Font name="Agency FB Bold" size="20.0" />
-               </font>
-               <textFill>
-                  <LinearGradient endX="1.0" endY="1.0">
-                     <stops>
-                        <Stop>
-                           <color>
-                              <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
-                           </color>
-                        </Stop>
-                        <Stop offset="1.0">
-                           <color>
-                              <Color red="0.843137264251709" green="1.0" blue="0.929411768913269" />
-                           </color>
-                        </Stop>
-                     </stops>
-                  </LinearGradient>
-               </textFill>
-            </Label>
-            <TextField fx:id="usersss" editable="false" layoutX="332.0" layoutY="269.0" onKeyReleased="#handleQuantityInput" prefHeight="25.0" prefWidth="174.0" />
-            <Button fx:id="cons" layoutX="385.0" layoutY="348.0" mnemonicParsing="false" onAction="#confirmClick" />
+            <Button layoutX="689.0" layoutY="42.0" mnemonicParsing="false" onAction="#backToSerialSection" text="BACK" />
+            <Button layoutX="639.0" layoutY="43.0" mnemonicParsing="false" onAction="#addBorrowersClick" text="ADD" />
          </children>
       </Pane>
-      <Pane fx:id="historyPane" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+      <Pane fx:id="historyPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
-            <TableView fx:id="historyTable" layoutX="15.0" layoutY="126.0" prefHeight="250.0" prefWidth="720.0">
+            <TableView fx:id="historyTable" layoutX="15.0" layoutY="169.0" prefHeight="407.0" prefWidth="720.0">
                <columns>
                   <TableColumn fx:id="c11" prefWidth="166.0" text="Name" />
                   <TableColumn fx:id="c21" prefWidth="47.0" text="Course" />
@@ -292,8 +250,8 @@
                   <TableColumn fx:id="c91" minWidth="0.0" prefWidth="0.0" />
                </columns>
             </TableView>
-            <TextField fx:id="historySearch" layoutX="15.0" layoutY="91.0" maxWidth="300.0" onKeyReleased="#searchMeHistory" prefWidth="300.0" />
-            <Pane layoutX="353.0" layoutY="14.0" prefHeight="80.0" prefWidth="397.0" style="-fx-background-color: white;">
+            <TextField fx:id="historySearch" layoutX="15.0" layoutY="134.0" maxWidth="300.0" onKeyReleased="#searchMeHistory" prefWidth="300.0" />
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
                <children>
                   <Label layoutX="14.0" layoutY="19.0" text="HISTORY">
                      <font>
@@ -335,19 +293,19 @@
             </Pane>
          </children>
       </Pane>
-      <Pane fx:id="equipmentsPane" layoutX="150.0" prefHeight="400.0" prefWidth="750.0" visible="false">
+      <Pane fx:id="equipmentsPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
-            <TableView fx:id="equipmentsTable" layoutX="144.0" layoutY="51.0" prefHeight="210.0" prefWidth="592.0">
+            <TableView fx:id="equipmentsTable" layoutX="14.0" layoutY="133.0" prefHeight="260.0" prefWidth="720.0">
                <columns>
-                  <TableColumn fx:id="s1" prefWidth="173.0" text="Name" />
-                  <TableColumn fx:id="s2" prefWidth="43.0" text="Stock" />
-                  <TableColumn fx:id="s3" prefWidth="57.0" text="Available" />
-                  <TableColumn fx:id="s4" prefWidth="180.0" text="Date Added" />
-                  <TableColumn fx:id="s5" prefWidth="134.0" />
+                  <TableColumn fx:id="s1" prefWidth="229.60000610351562" text="Name" />
+                  <TableColumn fx:id="s2" prefWidth="46.4000244140625" text="Stock" />
+                  <TableColumn fx:id="s3" prefWidth="65.5999755859375" text="Available" />
+                  <TableColumn fx:id="s4" prefWidth="184.00009155273438" text="Date Added" />
+                  <TableColumn fx:id="s5" prefWidth="174.39996337890625" />
                </columns>
             </TableView>
-            <TextField fx:id="nameOfEquipment" layoutX="144.0" layoutY="313.0" />
-            <Label layoutX="144.0" layoutY="287.0" text="Name">
+            <TextField fx:id="nameOfEquipment" layoutX="25.0" layoutY="437.0" prefHeight="25.0" prefWidth="250.0" />
+            <Label layoutX="25.0" layoutY="411.0" text="Name">
                <font>
                   <Font name="Agency FB Bold" size="20.0" />
                </font>
@@ -368,8 +326,8 @@
                   </LinearGradient>
                </textFill>
             </Label>
-            <TextField fx:id="stocksAvailable" layoutX="322.0" layoutY="312.0" onKeyReleased="#handleQuantity" />
-            <Label layoutX="322.0" layoutY="286.0" text="Stocks">
+            <TextField fx:id="stocksAvailable" layoutX="25.0" layoutY="503.0" onKeyReleased="#handleQuantity" prefHeight="25.0" prefWidth="250.0" />
+            <Label layoutX="25.0" layoutY="477.0" text="Stocks">
                <font>
                   <Font name="Agency FB Bold" size="20.0" />
                </font>
@@ -390,10 +348,10 @@
                   </LinearGradient>
                </textFill>
             </Label>
-            <Button fx:id="add" layoutX="144.0" layoutY="352.0" mnemonicParsing="false" onAction="#checkFirstTheStocks" style="-fx-background-radius: 10;" />
-            <Pane layoutX="31.0" prefHeight="400.0" prefWidth="80.0" style="-fx-background-color: white;">
+            <Button fx:id="add" layoutX="25.0" layoutY="540.0" mnemonicParsing="false" onAction="#checkFirstTheStocks" style="-fx-background-radius: 10;" />
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
                <children>
-                  <Label layoutX="32.0" layoutY="29.0" prefHeight="371.0" prefWidth="8.0" text="EQUIPMENTS" wrapText="true">
+                  <Label layoutX="14.0" layoutY="19.0" prefHeight="42.0" prefWidth="164.0" text="EQUIPMENTS" wrapText="true">
                      <font>
                         <Font name="Agency FB Bold" size="28.0" />
                      </font>
@@ -431,10 +389,10 @@
                   </Label>
                </children>
             </Pane>
-            <Button fx:id="save" layoutX="194.0" layoutY="352.0" mnemonicParsing="false" onAction="#editEquipment" />
+            <Button fx:id="save" layoutX="75.0" layoutY="540.0" mnemonicParsing="false" onAction="#editEquipment" />
          </children>
       </Pane>
-      <Pane fx:id="logInPane" prefHeight="400.0" prefWidth="900.0">
+      <Pane fx:id="logInPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
             <Label layoutX="37.0" layoutY="234.0" text="DORSU-BEC">
                <font>
@@ -500,5 +458,161 @@
             </Pane>
          </children>
       </Pane>
+      <Pane fx:id="availableSerialPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
+         <children>
+            <TableView fx:id="serialTable" layoutX="66.0" layoutY="146.0" prefHeight="314.0" prefWidth="637.0">
+              <columns>
+                <TableColumn fx:id="serialCol" prefWidth="473.6000061035156" text="SERIALS" />
+                <TableColumn fx:id="actionsCol" prefWidth="152.0" text="ACTION" />
+              </columns>
+            </TableView>
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="14.0" layoutY="19.0" prefHeight="42.0" prefWidth="164.0" text="AVAILABLE ITEMS" wrapText="true">
+                     <font>
+                        <Font name="Agency FB Bold" size="28.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+            <Button layoutX="343.0" layoutY="484.0" mnemonicParsing="false" onAction="#confirmSerialNumbersClick" prefHeight="42.0" prefWidth="83.0" text="CONFIRM" />
+            <Button layoutX="690.0" layoutY="107.0" mnemonicParsing="false" onAction="#backToBorrowingSection" text="BACK" />
+         </children>
+      </Pane>
+      <Pane fx:id="addBorrowersPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0">
+         <children>
+            <TextField fx:id="d1" layoutX="35.0" layoutY="192.0" prefHeight="25.0" prefWidth="200.0" />
+            <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
+               <children>
+                  <Label layoutX="14.0" layoutY="19.0" prefHeight="42.0" prefWidth="164.0" text="DETAILS" wrapText="true">
+                     <font>
+                        <Font name="Agency FB Bold" size="28.0" />
+                     </font>
+                     <textFill>
+                        <LinearGradient endX="1.0" endY="1.0">
+                           <stops>
+                              <Stop>
+                                 <color>
+                                    <Color red="0.00804093573242426" green="0.43421053886413574" blue="0.24243420362472534" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.006711409395973154">
+                                 <color>
+                                    <Color red="0.00860000029206276" green="0.4300000071525574" blue="0.23334667086601257" />
+                                 </color>
+                              </Stop>
+                              <Stop offset="0.6375838926174496">
+                                 <color>
+                                    <Color />
+                                 </color>
+                              </Stop>
+                              <Stop offset="1.0">
+                                 <color>
+                                    <Color red="0.48627451062202454" green="1.0" blue="0.7411764860153198" />
+                                 </color>
+                              </Stop>
+                           </stops>
+                        </LinearGradient>
+                     </textFill>
+                  </Label>
+               </children>
+            </Pane>
+            <Label layoutX="35.0" layoutY="166.0" text="SCHOOL ID" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="d2" layoutX="35.0" layoutY="256.0" prefHeight="25.0" prefWidth="200.0" />
+            <Label layoutX="35.0" layoutY="230.0" text="Firstname" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="d3" layoutX="35.0" layoutY="322.0" prefHeight="25.0" prefWidth="200.0" />
+            <Label layoutX="35.0" layoutY="296.0" text="Middle Initial" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="d4" layoutX="35.0" layoutY="389.0" prefHeight="25.0" prefWidth="200.0" />
+            <Label layoutX="35.0" layoutY="363.0" text="Lastname" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="d5" layoutX="35.0" layoutY="462.0" prefHeight="25.0" prefWidth="200.0" />
+            <Label layoutX="35.0" layoutY="436.0" text="Suffix" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="d6" layoutX="351.0" layoutY="192.0" prefHeight="25.0" prefWidth="200.0" />
+            <ChoiceBox fx:id="d7" layoutX="351.0" layoutY="256.0" prefHeight="25.0" prefWidth="200.0" />
+            <Label layoutX="351.0" layoutY="166.0" text="Gender" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="351.0" layoutY="230.0" text="Department" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="d8" layoutX="351.0" layoutY="323.0" prefHeight="25.0" prefWidth="200.0" />
+            <Label layoutX="351.0" layoutY="297.0" text="Role" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="349.0" layoutY="363.0" text="Year/Section" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="d9" layoutX="351.0" layoutY="389.0" prefHeight="25.0" prefWidth="45.0" />
+            <TextField fx:id="d10" layoutX="410.0" layoutY="390.0" prefHeight="25.0" prefWidth="45.0" />
+            <Label layoutX="399.0" layoutY="388.0" prefHeight="28.0" prefWidth="10.0" text="/" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="18.0" />
+               </font>
+            </Label>
+            <Button fx:id="addUser" layoutX="354.0" layoutY="462.0" mnemonicParsing="false" onAction="#addBorrower" prefHeight="25.0" prefWidth="200.0" text="ADD" />
+         </children></Pane>
    </children>
 </AnchorPane>

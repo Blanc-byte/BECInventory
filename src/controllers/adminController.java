@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableCell;
@@ -27,6 +28,7 @@ import models.BorrowedEquipments;
 import models.User;
 import models.equipmentModel;
 import models.reservation;
+import models.serialModel;
 
 /**
  *
@@ -39,9 +41,9 @@ public class adminController {
     public String url;
     public Connection con = null;
     
-    @FXML private TextField search,historySearch, searchReservation, searchEquipment, searchUser, quantity, usersss, nameOfEquipment, stocksAvailable;
+    @FXML private TextField search,historySearch, searchReservation, searchEquipment, searchUser, nameOfEquipment, stocksAvailable;
     @FXML private Pane userPane;
-    @FXML private Button add, save, cons;
+    @FXML private Button add, save;
     @FXML private PasswordField password;
     public void initialize()throws Exception{
         connect();
@@ -52,9 +54,54 @@ public class adminController {
         loadUsersTable();
         loadHistoryTable();
         setDesign();
-        
+        fillUserDetails();
         
     }
+    
+    @FXML private TextField d1,d2,d3,d4,d5,d9,d10;
+    @FXML private ChoiceBox d6,d7,d8;
+    public void addBorrower()throws Exception{
+        java.sql.Statement statement = con.createStatement();
+        if(!(
+                d1.getText().equals("") || d2.getText().equals("") || d4.getText().equals("") || 
+                d9.getText().equals("") || d10.getText().equals("") ||
+                d6.getValue() == null || d7.getValue() == null || d8.getValue() == null 
+        )){
+            statement.executeUpdate(""+"INSERT INTO `users`(`school_id`, `fname`, `mname`, `lname`, `suffix`, `gender`, `department`, `year_section`, `role`)"
+                    + "VALUES ("
+                    + "'"+d1.getText()+"',"
+                    + "'"+d2.getText()+"',"
+                    + "'"+d3.getText()+"',"
+                    + "'"+d4.getText()+"',"
+                    + "'"+d5.getText()+"',"
+                    + "'"+d6.getValue()+"',"
+                    + "'"+d7.getValue()+"',"
+                    + "'"+d9.getText()+d10.getText()+"',"
+                    + "'"+d8.getValue()+"'"
+                    + ")");
+            d1.setText("");d2.setText("");d3.setText("");d4.setText("");d5.setText("");d9.setText("");d10.setText("");
+            d6.setValue("");d7.setValue("");d8.setValue("");
+            JOptionPane.showMessageDialog(null, "SUCCESSFULLY ADDED");
+            addBorrowersPane.setVisible(false);borrow.setVisible(true);
+            loadBorrowersTable();
+            
+        }else{
+            JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
+        }
+    }
+    ObservableList<String> genders = FXCollections.observableArrayList("Male", "Female");
+    ObservableList<String> dept = FXCollections.observableArrayList("BSIT", "BSA", "BSBA", "BTLEd");
+    ObservableList<String> roles = FXCollections.observableArrayList("student", "faculty");
+    public void fillUserDetails(){
+        d6.setItems(genders);
+        d7.setItems(dept);
+        d8.setItems(roles);
+    }
+    public void addBorrowersClick(){
+        userPane.setVisible(false);
+        addBorrowersPane.setVisible(true);
+    }
+    
     String BECpassword = "dorsu-bec2024";
     public void checkPassword(){
         if(password.getText().equals(BECpassword)){
@@ -135,50 +182,26 @@ public class adminController {
     }
     
     public void confirmClick()throws Exception{
-        if(checkFirst()){
-            JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
-        }else{
-            if(Integer.parseInt(availableStock) <  Integer.parseInt(quantity.getText())){
-                JOptionPane.showMessageDialog(null, "No Available Stocks Left");
-            }else{
-                updateEquipmentAndBorrow();
-                loadEquipmentsTable();
-                borrow.setVisible(true);
-                userPane.setVisible(false);
-            }
-        }
+        updateEquipmentAndBorrow();
+        loadEquipmentsTable();
+        borrow.setVisible(true);
+        userPane.setVisible(false);
     }
     
     public void updateEquipmentAndBorrow()throws Exception{
-        int left = Integer.parseInt(availableStock) - Integer.parseInt(quantity.getText());
+        int left = Integer.parseInt(availableStock) - selectedSerials.size();
         java.sql.Statement statement = con.createStatement();
         statement.executeUpdate("UPDATE `equipments` SET `available`='"+left+"' WHERE id ='"+equipmentID+"'");
         getAvailSer(equipmentID);
-        for(int a=0; a<Integer.parseInt(quantity.getText()); a++){
+        for(serialModel sMs: selectedSerials){
             statement.executeUpdate("INSERT INTO `borrow`(`user_id`, `equipment_id`, `serial_id`) \n" +
                                     "VALUES ('"+usrID+"',"
                                             + "'"+equipmentID+"',"
-                                            + "'"+availSer.get(0)+"')");
+                                            + "'"+sMs.getId()+"')");
             
-            statement.executeUpdate("UPDATE `serial` SET `status`='unavailable' WHERE id = '"+availSer.get(0)+"'");
-            availSer.remove(0);
+            statement.executeUpdate("UPDATE `serial` SET `status`='unavailable' WHERE serial_num = '"+sMs.getserialNumber()+"'");
         }
-    }
-    public boolean checkFirst(){
-        if(usersss.getText().equals("") || quantity.getText().equals("")){
-            return true;
-        }
-        return false;
-    }
-    public void handleQuantityInput() {
-        String input = quantity.getText();
-
-        if (input.matches("\\d+")) { 
-            System.out.println("Quantity: " + input);
-        } else {
-            System.out.println("Invalid input. Only numbers are allowed.");
-            quantity.clear();
-        }
+        selectedSerials.clear();
     }
     
     @FXML private TableView<User> userTable;
@@ -217,7 +240,8 @@ public class adminController {
                      
                     try {
                         usrID=request.getId();
-                        usersss.setText(request.getFname()+" "+request.getMname()+" "+request.getLname()+" "+request.getSuffix());
+                        confirmClick();
+//                        usersss.setText(request.getFname()+" "+request.getMname()+" "+request.getLname()+" "+request.getSuffix());
                         //loadReservationTable();
 //                        getRequest(); 
 //                        pendingTable.setItems(requestsPending); 
@@ -358,19 +382,21 @@ public class adminController {
                     try {
                         equipmentID=request.getId();
                         availableStock=request.getAvailable();
-                        int response = JOptionPane.showConfirmDialog(
-                                null, 
-                                "Are you sure you want to delete "+request.getName()+" ?", 
-                                "Confirmation", 
-                                JOptionPane.YES_NO_OPTION, 
-                                JOptionPane.QUESTION_MESSAGE
-                        );
+                        if(request.getStock().equals(request.getAvailable())){
+                            int response = JOptionPane.showConfirmDialog(
+                                    null, 
+                                    "Are you sure you want to delete "+request.getName()+" ?", 
+                                    "Confirmation", 
+                                    JOptionPane.YES_NO_OPTION, 
+                                    JOptionPane.QUESTION_MESSAGE
+                            );
 
-                        // Check the user's response
-                        if (response == JOptionPane.YES_OPTION) {
-                            deleteEquipment();
-                        } else if (response == JOptionPane.NO_OPTION) {
-                        } else {
+                            // Check the user's response
+                            if (response == JOptionPane.YES_OPTION) {
+                                deleteEquipment();
+                            }
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Cant proceed, Complete the number of stocks first");
                         }
                         
                         //loadReservationTable();
@@ -392,8 +418,68 @@ public class adminController {
             }
         });
     }
+    ObservableList<serialModel> availSerials = FXCollections.observableArrayList();
+    public void getAllAvailableSerialNumbers()throws Exception{
+        java.sql.Statement statement = con.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                  "SELECT * FROM serial "
+                + "WHERE status = 'available' AND equipment_id = '"+equipmentID+"'"
+        );
+        while(resultSet.next()){
+            String i = resultSet.getString("id");
+            String ii = resultSet.getString("serial_num");
+            
+            availSerials.add(new serialModel(i,ii));
+        }
+    }
+    
+    @FXML private TableView<serialModel> serialTable;
+    @FXML private TableColumn<serialModel, String> serialCol;
+    @FXML private TableColumn<serialModel, Void> actionsCol;
+    ObservableList<serialModel> selectedSerials = FXCollections.observableArrayList();
+
+    public void loadSerialTable()throws Exception{
+        availSerials.clear();
+        serialCol.setCellValueFactory(cellData -> cellData.getValue().serialNumberProperty());
+        getAllAvailableSerialNumbers();
+        serialTable.setItems(availSerials);
+        
+        actionsCol.setCellFactory(col -> new TableCell<>() {
+            private final Button confirmButton = new Button("SELECT");
+            {
+                confirmButton.setOnAction(event -> {
+                    serialModel selectedItem = getTableView().getItems().get(getIndex());
+                    if (selectedSerials.contains(selectedItem)) {
+                        selectedSerials.remove(selectedItem);
+                        confirmButton.setText("SELECT");
+                    } else {
+                        selectedSerials.add(selectedItem);
+                        confirmButton.setText("SELECTED");
+                    }
+                    
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    serialModel currentItem = getTableView().getItems().get(getIndex());
+                    confirmButton.setText(selectedSerials.contains(currentItem) ? "SELECTED" : "SELECT");
+                    setGraphic(confirmButton);
+                }
+            }
+        });
+    }
+    public void confirmSerialNumbersClick()throws Exception{
+        availableSerialPane.setVisible(false);
+        userPane.setVisible(true);
+        loadUsersTable();
+    }
     
     
+    @FXML private Pane availableSerialPane;
     @FXML private TableView<equipmentModel> borrowsTable;
     @FXML private TableColumn<equipmentModel, String> z1,z2, z3, z4;
     @FXML private TableColumn<equipmentModel, Void> z5;
@@ -403,12 +489,8 @@ public class adminController {
         z2.setCellValueFactory(cellData -> cellData.getValue().stockProperty());
         z3.setCellValueFactory(cellData -> cellData.getValue().availableProperty());
         z4.setCellValueFactory(cellData -> cellData.getValue().dateCreatedProperty());
-        
         getEquipments();
-        
-        
         borrowsTable.setItems(Equipments);
-        
         z5.setCellFactory(col -> new TableCell<>() {
             private final Button confirmButton = new Button();
 
@@ -429,8 +511,10 @@ public class adminController {
                         equipmentID=request.getId();
                         availableStock=request.getAvailable();
                         borrow.setVisible(false);
-                        userPane.setVisible(true);
-                        loadUsersTable();
+                        availableSerialPane.setVisible(true);
+//                        userPane.setVisible(true);
+                        loadSerialTable();
+//                        loadUsersTable();
                         //loadReservationTable();
 //                        getRequest(); 
 //                        pendingTable.setItems(requestsPending); 
@@ -848,8 +932,8 @@ public class adminController {
         return con;
     
     }
-    @FXML private Pane home, reservation, borrow, historyPane, equipmentsPane, logInPane, navigation;
-    @FXML private Button homebtn, reservationbtn, borrowbtn, historybtn,equipmentbtn;
+    @FXML private Pane home, reservation, borrow, historyPane, equipmentsPane, logInPane, navigation, addBorrowersPane;
+    @FXML private Button homebtn, reservationbtn, borrowbtn, historybtn,equipmentbtn; 
 
     private void resetButtonStyles() {
         String defaultStyle = "-fx-background-color: transparent; -fx-text-fill: black;";
@@ -873,6 +957,8 @@ public class adminController {
         historyPane.setVisible(false);
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
+        availableSerialPane.setVisible(false);
+        addBorrowersPane.setVisible(false);
         loadBorrowersTable();
     }
 
@@ -880,11 +966,12 @@ public class adminController {
         resetButtonStyles();
         setActiveButtonStyle(reservationbtn);
         home.setVisible(false);
-        reservation.setVisible(true);
+        addBorrowersPane.setVisible(true);
         borrow.setVisible(false);
         historyPane.setVisible(false);
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
+        availableSerialPane.setVisible(false);
         loadReservationTable();
     }
 
@@ -897,6 +984,8 @@ public class adminController {
         historyPane.setVisible(false);
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
+        availableSerialPane.setVisible(false);
+        addBorrowersPane.setVisible(false);
         loadEquipmentsTable();
     }
 
@@ -909,6 +998,8 @@ public class adminController {
         historyPane.setVisible(true);
         userPane.setVisible(false);
         equipmentsPane.setVisible(false);
+        availableSerialPane.setVisible(false);
+        addBorrowersPane.setVisible(false);
         loadHistoryTable();
     }
     public void equipmentsClick() throws Exception{
@@ -920,6 +1011,8 @@ public class adminController {
         historyPane.setVisible(false);
         userPane.setVisible(false);
         equipmentsPane.setVisible(true);
+        availableSerialPane.setVisible(false);
+        addBorrowersPane.setVisible(false);
         loadEquipmentsTable2();
     }
     public void setDesign()throws Exception{
@@ -931,8 +1024,10 @@ public class adminController {
         reservation.setStyle(paneDesign);
         userPane.setStyle(paneDesign);
         historyPane.setStyle(paneDesign);
+        availableSerialPane.setStyle(paneDesign);
         equipmentsPane.setStyle(paneDesign);
         logInPane.setStyle(paneDesign);
+        addBorrowersPane.setStyle(paneDesign);
         // Table styling for the body (white background, no borders)
         String tableDesign = 
             "-fx-border-color: transparent; " +
@@ -946,6 +1041,7 @@ public class adminController {
         userTable.setStyle(tableDesign);
         historyTable.setStyle(tableDesign);
         equipmentsTable.setStyle(tableDesign);
+        serialTable.setStyle(tableDesign);
 
         // Styling for headers (Persian Green)
         String headerStyle = 
@@ -995,10 +1091,7 @@ public class adminController {
         ImageView cancelIcon3 = new ImageView(new Image("icons/confirm.png")); // Replace with your icon file
         cancelIcon3.setFitHeight(30); 
         cancelIcon3.setFitWidth(30);
-
-        cons.setGraphic(cancelIcon3);
-        cons.setContentDisplay(ContentDisplay.LEFT); 
-        cons.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
+        
         
         add.setDisable(false);
         save.setDisable(true);
@@ -1045,5 +1138,13 @@ public class adminController {
         historybtn.setContentDisplay(ContentDisplay.LEFT); 
         historybtn.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
         
+    }
+    public void backToBorrowingSection(){
+        availableSerialPane.setVisible(false);
+        borrow.setVisible(true);
+    }
+    public void backToSerialSection(){
+        availableSerialPane.setVisible(true);
+        userPane.setVisible(false);
     }
 }
