@@ -9,8 +9,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContentDisplay;
@@ -23,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 import models.BorrowedEquipments;
 import models.User;
@@ -62,32 +65,63 @@ public class adminController {
     @FXML private ChoiceBox d6,d7,d8;
     public void addBorrower()throws Exception{
         java.sql.Statement statement = con.createStatement();
-        if(!(
-                d1.getText().equals("") || d2.getText().equals("") || d4.getText().equals("") || 
-                d9.getText().equals("") || d10.getText().equals("") ||
-                d6.getValue() == null || d7.getValue() == null || d8.getValue() == null 
-        )){
-            statement.executeUpdate(""+"INSERT INTO `users`(`school_id`, `fname`, `mname`, `lname`, `suffix`, `gender`, `department`, `year_section`, `role`)"
-                    + "VALUES ("
-                    + "'"+d1.getText()+"',"
-                    + "'"+d2.getText()+"',"
-                    + "'"+d3.getText()+"',"
-                    + "'"+d4.getText()+"',"
-                    + "'"+d5.getText()+"',"
-                    + "'"+d6.getValue()+"',"
-                    + "'"+d7.getValue()+"',"
-                    + "'"+d9.getText()+d10.getText()+"',"
-                    + "'"+d8.getValue()+"'"
-                    + ")");
-            d1.setText("");d2.setText("");d3.setText("");d4.setText("");d5.setText("");d9.setText("");d10.setText("");
-            d6.setValue("");d7.setValue("");d8.setValue("");
-            JOptionPane.showMessageDialog(null, "SUCCESSFULLY ADDED");
-            addBorrowersPane.setVisible(false);borrow.setVisible(true);
-            loadBorrowersTable();
-            
+        if(d8.getValue() != null){
+            if(d8.getValue().equals("faculty")){
+                if(!(
+                        d2.getText().equals("") || d4.getText().equals("") || 
+                        d8.getValue() == null 
+                )){
+                    statement.executeUpdate(""+"INSERT INTO `users`(`fname`, `mname`, `lname`, `suffix`, `gender`, `role`)"
+                            + "VALUES ("
+                            + "'"+d2.getText()+"',"
+                            + "'"+d3.getText()+"',"
+                            + "'"+d4.getText()+"',"
+                            + "'"+d5.getText()+"',"
+                            + "'"+d6.getValue()+"',"
+                            + "'"+d8.getValue()+"'"
+                            + ")");
+                    d1.setText("");d2.setText("");d3.setText("");d4.setText("");d5.setText("");d9.setText("");d10.setText("");
+                    d6.setValue("");d7.setValue("");d8.setValue("");
+                    JOptionPane.showMessageDialog(null, "SUCCESSFULLY ADDED");
+                    addBorrowersPane.setVisible(false);borrow.setVisible(true);
+                    loadBorrowersTable();
+
+                }else{
+                    JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
+                }
+            }else{
+                if(!(
+                        d1.getText().equals("") || d2.getText().equals("") || d4.getText().equals("") || 
+                        d9.getText().equals("") || d10.getText().equals("") ||
+                        d6.getValue() == null || d7.getValue() == null || d8.getValue() == null 
+                )){
+                    statement.executeUpdate(""+"INSERT INTO `users`(`school_id`, `fname`, `mname`, `lname`, `suffix`, `gender`, `department`, `year_section`, `role`)"
+                            + "VALUES ("
+                            + "'"+d1.getText()+"',"
+                            + "'"+d2.getText()+"',"
+                            + "'"+d3.getText()+"',"
+                            + "'"+d4.getText()+"',"
+                            + "'"+d5.getText()+"',"
+                            + "'"+d6.getValue()+"',"
+                            + "'"+d7.getValue()+"',"
+                            + "'"+d9.getText()+d10.getText()+"',"
+                            + "'"+d8.getValue()+"'"
+                            + ")");
+                    d1.setText("");d2.setText("");d3.setText("");d4.setText("");d5.setText("");d9.setText("");d10.setText("");
+                    d6.setValue("");d7.setValue("");d8.setValue("");
+                    JOptionPane.showMessageDialog(null, "SUCCESSFULLY ADDED");
+                    addBorrowersPane.setVisible(false);borrow.setVisible(true);
+                    loadBorrowersTable();
+
+                }else{
+                    JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
+                }
+            }
         }else{
             JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
         }
+        
+        
     }
     ObservableList<String> genders = FXCollections.observableArrayList("Male", "Female");
     ObservableList<String> dept = FXCollections.observableArrayList("BSIT", "BSA", "BSBA", "BTLEd");
@@ -100,6 +134,7 @@ public class adminController {
     public void addBorrowersClick(){
         userPane.setVisible(false);
         addBorrowersPane.setVisible(true);
+        selectedSerials.clear();
     }
     
     String BECpassword = "dorsu-bec2024";
@@ -131,7 +166,6 @@ public class adminController {
             for(int a=0; a<Integer.parseInt(stocksAvailable.getText()); a++ ){
                 statement.executeUpdate("INSERT INTO `serial`(`serial_num`, `equipment_id`) "
                     + "VALUES ('"+nameOfEquipment.getText()+"-0"+a+"','"+ii+"')");
-            
             }
             
             nameOfEquipment.setText("");stocksAvailable.setText("");
@@ -456,7 +490,6 @@ public class adminController {
                         selectedSerials.add(selectedItem);
                         confirmButton.setText("SELECTED");
                     }
-                    
                 });
             }
             @Override
@@ -848,7 +881,8 @@ public class adminController {
                equipment.getDepartment().toLowerCase().contains(searchTerm) ||
                equipment.getYearSection().toLowerCase().contains(searchTerm) ||
                equipment.getEquipmentName().toLowerCase().contains(searchTerm) ||
-               equipment.getSerialNum().toLowerCase().contains(searchTerm);
+               equipment.getSerialNum().toLowerCase().contains(searchTerm)||
+               equipment.getBorrowedAt().toLowerCase().contains(searchTerm);
     }
     
     
@@ -948,6 +982,7 @@ public class adminController {
         button.setStyle("-fx-background-color: #00a693; -fx-text-fill: white;");
     }
 
+    // Navigation
     public void homeClick() throws Exception{
         resetButtonStyles();
         setActiveButtonStyle(homebtn);
@@ -960,19 +995,24 @@ public class adminController {
         availableSerialPane.setVisible(false);
         addBorrowersPane.setVisible(false);
         loadBorrowersTable();
+        selectedSerials.clear();
     }
 
-    public void reservationClick() throws Exception{
-        resetButtonStyles();
-        setActiveButtonStyle(reservationbtn);
-        home.setVisible(false);
-        addBorrowersPane.setVisible(true);
-        borrow.setVisible(false);
-        historyPane.setVisible(false);
-        userPane.setVisible(false);
-        equipmentsPane.setVisible(false);
-        availableSerialPane.setVisible(false);
-        loadReservationTable();
+    public void reservationClick(ActionEvent event) throws Exception{
+        Node source = (Node) event.getSource();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
+//        resetButtonStyles();
+//        setActiveButtonStyle(reservationbtn);
+//        home.setVisible(false);
+//        addBorrowersPane.setVisible(true);
+//        borrow.setVisible(false);
+//        historyPane.setVisible(false);
+//        userPane.setVisible(false);
+//        equipmentsPane.setVisible(false);
+//        availableSerialPane.setVisible(false);
+//        loadReservationTable();
+//        selectedSerials.clear();
     }
 
     public void borrowClick() throws Exception{
@@ -987,6 +1027,7 @@ public class adminController {
         availableSerialPane.setVisible(false);
         addBorrowersPane.setVisible(false);
         loadEquipmentsTable();
+        selectedSerials.clear();
     }
 
     public void historyClick() throws Exception{
@@ -1001,6 +1042,7 @@ public class adminController {
         availableSerialPane.setVisible(false);
         addBorrowersPane.setVisible(false);
         loadHistoryTable();
+        selectedSerials.clear();
     }
     public void equipmentsClick() throws Exception{
         resetButtonStyles();
@@ -1014,7 +1056,10 @@ public class adminController {
         availableSerialPane.setVisible(false);
         addBorrowersPane.setVisible(false);
         loadEquipmentsTable2();
+        selectedSerials.clear();
     }
+    
+    // Dire Mag Design
     public void setDesign()throws Exception{
         homeClick();
         homebtn.setStyle("-fx-background-color: #00a693; -fx-text-fill: white;");
@@ -1106,7 +1151,7 @@ public class adminController {
         homebtn.setContentDisplay(ContentDisplay.LEFT); 
         homebtn.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
         
-        ImageView cancelIcon5 = new ImageView(new Image("icons/reserve.png")); // Replace with your icon file
+        ImageView cancelIcon5 = new ImageView(new Image("icons/logout2.png")); // Replace with your icon file
         cancelIcon5.setFitHeight(25); 
         cancelIcon5.setFitWidth(25);
 
@@ -1142,6 +1187,7 @@ public class adminController {
     public void backToBorrowingSection(){
         availableSerialPane.setVisible(false);
         borrow.setVisible(true);
+        selectedSerials.clear();
     }
     public void backToSerialSection(){
         availableSerialPane.setVisible(true);

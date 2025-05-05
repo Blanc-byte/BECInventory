@@ -18,7 +18,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.adminController">
    <children>
-      <Pane fx:id="navigation" prefHeight="592.0" prefWidth="150.0" style="-fx-background-color: white;">
+      <Pane fx:id="navigation" prefHeight="592.0" prefWidth="150.0" style="-fx-background-color: white;" visible="false">
          <children>
             <Button fx:id="homebtn" layoutX="10.0" layoutY="222.0" mnemonicParsing="false" onAction="#homeClick" prefHeight="30.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: black;">
                <font>
@@ -392,7 +392,7 @@
             <Button fx:id="save" layoutX="75.0" layoutY="540.0" mnemonicParsing="false" onAction="#editEquipment" />
          </children>
       </Pane>
-      <Pane fx:id="logInPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
+      <Pane fx:id="logInPane" prefHeight="592.0" prefWidth="900.0">
          <children>
             <Label layoutX="37.0" layoutY="234.0" text="DORSU-BEC">
                <font>
@@ -510,7 +510,7 @@
             <Button layoutX="690.0" layoutY="107.0" mnemonicParsing="false" onAction="#backToBorrowingSection" text="BACK" />
          </children>
       </Pane>
-      <Pane fx:id="addBorrowersPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0">
+      <Pane fx:id="addBorrowersPane" layoutX="150.0" prefHeight="592.0" prefWidth="750.0" visible="false">
          <children>
             <TextField fx:id="d1" layoutX="35.0" layoutY="192.0" prefHeight="25.0" prefWidth="200.0" />
             <Pane layoutY="14.0" prefHeight="80.0" prefWidth="750.0" style="-fx-background-color: white;">
