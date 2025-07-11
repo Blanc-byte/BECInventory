@@ -251,7 +251,7 @@ public class UserController {
             String iiii = resultSet.getString("available");   
             String iiiii = resultSet.getString("date_created");
             
-            equipmentModel equipment = new equipmentModel(i, ii, iii, iiii, iiiii);
+//            equipmentModel equipment = new equipmentModel(i, ii, iii, iiii, iiiii);
             equipmentList.add(equipment);
         }
     }
