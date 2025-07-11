@@ -7,27 +7,47 @@ package controllers;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 import models.BorrowedEquipments;
+import models.RemarkModel;
+import models.StockRecord;
 import models.User;
 import models.equipmentModel;
 import models.reservation;
@@ -44,9 +64,9 @@ public class adminController {
     public String url;
     public Connection con = null;
     
-    @FXML private TextField search,historySearch, searchReservation, searchEquipment, searchUser, nameOfEquipment, stocksAvailable;
+    @FXML private TextField search,historySearch, searchReservation, searchEquipment, searchUser, searchField;//, nameOfEquipment, stocksAvailable
     @FXML private Pane userPane;
-    @FXML private Button add, save;
+//    @FXML private Button add, save;
     @FXML private PasswordField password;
     public void initialize()throws Exception{
         connect();
@@ -58,9 +78,195 @@ public class adminController {
         loadHistoryTable();
         setDesign();
         fillUserDetails();
-        
+        productionLoad();
+
     }
-    
+    @FXML
+    private void handleSearchEquipment(){
+        String filter = searchField.getText().toLowerCase().trim();
+        FilteredList<equipmentModel> filteredData = new FilteredList<>(Equipments, p -> true);
+        SortedList<equipmentModel> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(equipmentsTable.comparatorProperty());
+        equipmentsTable.setItems(sortedData);
+        filteredData.setPredicate(equipment -> {
+            if (filter.isEmpty()) {
+                return true;
+            }
+            return equipment.getName().toLowerCase().contains(filter)
+                || equipment.getStock().toLowerCase().contains(filter)
+                || equipment.getAvailable().toLowerCase().contains(filter)
+                || equipment.getDateCreated().toLowerCase().contains(filter)
+                || equipment.getStockRoom().toLowerCase().contains(filter);
+        });
+    }
+    @FXML
+    private void handleAddEquipment() throws Exception{
+        // 1. Create custom dialog
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Add Equipment");
+
+        // 2. Create input fields
+        Label nameLabel = new Label("Name:");
+        TextField nameField = new TextField();
+
+        Label stockRoomLabel = new Label("Stock Room:");
+        ComboBox<Integer> stockRoomCombo = new ComboBox<>();
+        stockRoomCombo.getItems().addAll(1, 2);
+        stockRoomCombo.getSelectionModel().selectFirst();
+
+        // 3. Layout
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        grid.add(nameLabel, 0, 0);
+        grid.add(nameField, 1, 0);
+
+        grid.add(stockRoomLabel, 0, 1);
+        grid.add(stockRoomCombo, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // 4. Add buttons
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // 5. Show dialog and handle result
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String name = nameField.getText().trim();
+            int stockRoom = stockRoomCombo.getValue();
+
+            if (name.isEmpty()) {
+                showAlert(Alert.AlertType.ERROR, "Input Error", "Name cannot be empty.");
+                return;
+            }
+
+            insertEquipment(name, stockRoom);
+            loadEquipmentsTable2();
+        }
+    }
+        
+    private void insertEquipment(String name, int stockRoom) throws Exception {
+        java.sql.Statement statement = con.createStatement();
+
+        // 1️⃣ Check if the equipment name already exists
+        ResultSet rs = statement.executeQuery(
+            "SELECT COUNT(*) AS count FROM equipments WHERE name = '" + name + "'"
+        );
+
+        int count = 0;
+        if (rs.next()) {
+            count = rs.getInt("count");
+        }
+
+        rs.close();
+
+        if (count > 0) {
+            showAlert(Alert.AlertType.WARNING, "Duplicate Equipment",
+                      "An equipment with this name already exists in the database!");
+        } else {
+            // 2️⃣ Insert if not exists
+            statement.executeUpdate(
+                "INSERT INTO equipments (name, stockRoom) VALUES ('" + name + "', " + stockRoom + ")",
+                statement.RETURN_GENERATED_KEYS 
+            );
+            // ✅ Get the new equipment ID
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            int newEquipmentID = -1;
+            if (generatedKeys.next()) {
+                newEquipmentID = generatedKeys.getInt(1);
+            }
+            generatedKeys.close();
+
+            showAlert(Alert.AlertType.INFORMATION, "Success",
+                      "Equipment added successfully! Now add inventory details.");
+
+            statement.close();
+
+            // ✅ Open dialog for additional inventory details
+            addInventoryDetails(newEquipmentID);
+//            showAlert(Alert.AlertType.INFORMATION, "Success",
+//                      "Equipment added successfully!");
+        }
+        statement.close();
+    }
+    private void addInventoryDetails(int equipmentID) throws Exception {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Add Inventory Details");
+        dialog.setHeaderText("Enter inventory info for equipment ID: " + equipmentID);
+
+        // Layout with input fields
+        Label propLabel = new Label("Property No:");
+        TextField propField = new TextField();
+
+        Label descLabel = new Label("Description:");
+        TextField descField = new TextField();
+
+        Label serialLabel = new Label("Serial No:");
+        TextField serialField = new TextField();
+
+        Label dateLabel = new Label("Date Purchased (YYYY-MM-DD):");
+        TextField dateField = new TextField();
+
+        Label amountLabel = new Label("Amount:");
+        TextField amountField = new TextField();
+
+        Label parLabel = new Label("PAR No:");
+        TextField parField = new TextField();
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(propLabel, 0, 0); grid.add(propField, 1, 0);
+        grid.add(descLabel, 0, 1); grid.add(descField, 1, 1);
+        grid.add(serialLabel, 0, 2); grid.add(serialField, 1, 2);
+        grid.add(dateLabel, 0, 3); grid.add(dateField, 1, 3);
+        grid.add(amountLabel, 0, 4); grid.add(amountField, 1, 4);
+        grid.add(parLabel, 0, 5); grid.add(parField, 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Get values
+            String propertyNum = propField.getText().trim();
+            String description = descField.getText().trim();
+            String serialNum = serialField.getText().trim();
+            String datePurchased = dateField.getText().trim();
+            String amount = amountField.getText().trim();
+            String parNum = parField.getText().trim();
+
+            // ✅ Insert into inventory
+            java.sql.Statement statement = con.createStatement();
+            String insertInventory = String.format(
+                "INSERT INTO inventory (equipment_id, date_purchased, property_num, description, serial_num, amount, par_num) "
+              + "VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
+                equipmentID, datePurchased, propertyNum, description, serialNum, amount, parNum
+            );
+            statement.executeUpdate(insertInventory);
+            statement.close();
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Inventory details added!");
+        }
+    }
+
+
+
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    public void productionLoad()throws Exception{
+        homeClick();
+        navigation.setVisible(true);
+    }
     @FXML private TextField d1,d2,d3,d4,d5,d9,d10;
     @FXML private ChoiceBox d6,d7,d8;
     public void addBorrower()throws Exception{
@@ -147,42 +353,42 @@ public class adminController {
     }
     
     
-    public void checkFirstTheStocks()throws Exception{
-        if(nameOfEquipment.getText().equals("") || stocksAvailable.getText().equals("")){
-            JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
-        }else{
-            java.sql.Statement statement = con.createStatement();
-            statement.executeUpdate("INSERT INTO `equipments`(`name`, `stock`, `available`) "
-                    + "VALUES ('"+nameOfEquipment.getText()+"','"+stocksAvailable.getText()+"','"+stocksAvailable.getText()+"')");
-            
-            
-            String ii = "";
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM equipments WHERE name ='"+nameOfEquipment.getText()+"'");
-            while(resultSet.next()){
-                ii = resultSet.getString("id");
-
-            }
-            
-            for(int a=0; a<Integer.parseInt(stocksAvailable.getText()); a++ ){
-                statement.executeUpdate("INSERT INTO `serial`(`serial_num`, `equipment_id`) "
-                    + "VALUES ('"+nameOfEquipment.getText()+"-0"+a+"','"+ii+"')");
-            }
-            
-            nameOfEquipment.setText("");stocksAvailable.setText("");
-            loadEquipmentsTable2();
-            JOptionPane.showMessageDialog(null, "SUCCESSFULLY ADDED");
-        }
-    }
-    public void handleQuantity() {
-        String input = stocksAvailable.getText();
-
-        if (input.matches("\\d+")) { 
-            System.out.println("Quantity: " + input);
-        } else {
-            System.out.println("Invalid input. Only numbers are allowed.");
-            stocksAvailable.clear();
-        }
-    }
+//    public void checkFirstTheStocks()throws Exception{
+//        if(nameOfEquipment.getText().equals("") || stocksAvailable.getText().equals("")){
+//            JOptionPane.showMessageDialog(null, "COMPLETE THE DETAILS");
+//        }else{
+//            java.sql.Statement statement = con.createStatement();
+//            statement.executeUpdate("INSERT INTO `equipments`(`name`, `stock`, `available`) "
+//                    + "VALUES ('"+nameOfEquipment.getText()+"','"+stocksAvailable.getText()+"','"+stocksAvailable.getText()+"')");
+//            
+//            
+//            String ii = "";
+//            ResultSet resultSet = statement.executeQuery("SELECT * FROM equipments WHERE name ='"+nameOfEquipment.getText()+"'");
+//            while(resultSet.next()){
+//                ii = resultSet.getString("id");
+//
+//            }
+//            
+//            for(int a=0; a<Integer.parseInt(stocksAvailable.getText()); a++ ){
+//                statement.executeUpdate("INSERT INTO `serial`(`serial_num`, `equipment_id`) "
+//                    + "VALUES ('"+nameOfEquipment.getText()+"-0"+a+"','"+ii+"')");
+//            }
+//            
+//            nameOfEquipment.setText("");stocksAvailable.setText("");
+//            loadEquipmentsTable2();
+//            JOptionPane.showMessageDialog(null, "SUCCESSFULLY ADDED");
+//        }
+//    }
+//    public void handleQuantity() {
+//        String input = stocksAvailable.getText();
+//
+//        if (input.matches("\\d+")) { 
+//            System.out.println("Quantity: " + input);
+//        } else {
+//            System.out.println("Invalid input. Only numbers are allowed.");
+//            stocksAvailable.clear();
+//        }
+//    }
     
     String availableStock = "", equipmentID="", usrID="";
     
@@ -193,28 +399,29 @@ public class adminController {
         loadEquipmentsTable2();
     }
     
-    public void editEquipment()throws Exception{
-        java.sql.Statement statement = con.createStatement();
-        statement.executeUpdate("UPDATE equipments SET name = '"+nameOfEquipment.getText()+"', "
-                            + "stock='"+stocksAvailable.getText()+"',"
-                            + "available='"+stocksAvailable.getText()+"' WHERE id = '"+equipmentID+"'"
-        );
-        
-        
-        
-        save.setDisable(true);
-        add.setDisable(false);
-        statement.executeUpdate("DELETE FROM serial WHERE equipment_id = '"+equipmentID+"'");
-        
-        for(int a=0; a<Integer.parseInt(stocksAvailable.getText()); a++ ){
-            statement.executeUpdate("INSERT INTO `serial`(`serial_num`, `equipment_id`) "
-                + "VALUES ('"+nameOfEquipment.getText()+"-0"+a+"','"+equipmentID+"')");
-
-        }
-        nameOfEquipment.setText("");stocksAvailable.setText("");
-        loadEquipmentsTable2();
-    }
+//    public void editEquipment()throws Exception{
+//        java.sql.Statement statement = con.createStatement();
+//        statement.executeUpdate("UPDATE equipments SET name = '"+nameOfEquipment.getText()+"', "
+//                            + "stock='"+stocksAvailable.getText()+"',"
+//                            + "available='"+stocksAvailable.getText()+"' WHERE id = '"+equipmentID+"'"
+//        );
+//        
+//        
+//        
+//        save.setDisable(true);
+//        add.setDisable(false);
+//        statement.executeUpdate("DELETE FROM serial WHERE equipment_id = '"+equipmentID+"'");
+//        
+//        for(int a=0; a<Integer.parseInt(stocksAvailable.getText()); a++ ){
+//            statement.executeUpdate("INSERT INTO `serial`(`serial_num`, `equipment_id`) "
+//                + "VALUES ('"+nameOfEquipment.getText()+"-0"+a+"','"+equipmentID+"')");
+//
+//        }
+//        nameOfEquipment.setText("");stocksAvailable.setText("");
+//        loadEquipmentsTable2();
+//    }
     
+    boolean borrowedSuccess=true;
     public void confirmClick()throws Exception{
         updateEquipmentAndBorrow();
         loadEquipmentsTable();
@@ -222,21 +429,57 @@ public class adminController {
         userPane.setVisible(false);
     }
     
-    public void updateEquipmentAndBorrow()throws Exception{
-        int left = Integer.parseInt(availableStock) - selectedSerials.size();
+    public void updateEquipmentAndBorrow() throws Exception {
         java.sql.Statement statement = con.createStatement();
-        statement.executeUpdate("UPDATE `equipments` SET `available`='"+left+"' WHERE id ='"+equipmentID+"'");
-        getAvailSer(equipmentID);
-        for(serialModel sMs: selectedSerials){
-            statement.executeUpdate("INSERT INTO `borrow`(`user_id`, `equipment_id`, `serial_id`) \n" +
-                                    "VALUES ('"+usrID+"',"
-                                            + "'"+equipmentID+"',"
-                                            + "'"+sMs.getId()+"')");
-            
-            statement.executeUpdate("UPDATE `serial` SET `status`='unavailable' WHERE serial_num = '"+sMs.getserialNumber()+"'");
+
+        // 1️⃣ Check if there are any borrowed rows for this user
+        ResultSet rs = statement.executeQuery(
+            "SELECT * FROM borrow WHERE user_id = '" + usrID + "' AND status = 'borrowed'"
+        );
+
+        boolean hasPendingBorrow = rs.next();
+        rs.close();
+
+        boolean proceed = true;
+
+        if (hasPendingBorrow) {
+            // ❗ Prompt admin for decision
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Pending Borrow");
+            confirm.setHeaderText("This user already has borrowed equipment.");
+            confirm.setContentText("Do you want to allow borrowing again?");
+
+            ButtonType yesButton = new ButtonType("Yes");
+            ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            confirm.getButtonTypes().setAll(yesButton, noButton);
+
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isPresent() && result.get() == noButton) {
+                proceed = false; // Admin said no
+                showAlert(Alert.AlertType.INFORMATION, "Unsuccessful Transaction",
+                          "Borrow canceled because the user has pending borrowed equipment.");
+            }
         }
-        selectedSerials.clear();
+
+        if (proceed) {
+            int left = Integer.parseInt(availableStock) - selectedSerials.size();
+            statement.executeUpdate("UPDATE equipments SET available='" + left + "' WHERE id ='" + equipmentID + "'");
+            getAvailSer(equipmentID);
+
+            for (serialModel sMs : selectedSerials) {
+                statement.executeUpdate("INSERT INTO borrow(user_id, equipment_id, serial_id, status) "
+                                      + "VALUES ('" + usrID + "', '" + equipmentID + "', '" + sMs.getId() + "', 'borrowed')");
+                statement.executeUpdate("UPDATE serial SET status='unavailable' WHERE serial_num = '" + sMs.getserialNumber() + "'");
+            }
+
+            selectedSerials.clear();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Equipment successfully borrowed!");
+        }
+
+        statement.close();
     }
+
     
     @FXML private TableView<User> userTable;
     @FXML private TableColumn<User, String> a1,a2, a3, a4, a5, a6, a7;
@@ -345,8 +588,9 @@ public class adminController {
                equipment.getRole().toLowerCase().contains(searchTerm);
     }
     
+    
     @FXML private TableView<equipmentModel> equipmentsTable;
-    @FXML private TableColumn<equipmentModel, String> s1,s2, s3, s4;
+    @FXML private TableColumn<equipmentModel, String> s1,s2, s3, s4, stockRoom;
     @FXML private TableColumn<equipmentModel, Void> s5;
     public void loadEquipmentsTable2()throws Exception{
         Equipments.clear();
@@ -354,6 +598,7 @@ public class adminController {
         s2.setCellValueFactory(cellData -> cellData.getValue().stockProperty());
         s3.setCellValueFactory(cellData -> cellData.getValue().availableProperty());
         s4.setCellValueFactory(cellData -> cellData.getValue().dateCreatedProperty());
+        stockRoom.setCellValueFactory(cellData -> cellData.getValue().stockRoomProperty());
         
         getEquipments();
         
@@ -361,11 +606,21 @@ public class adminController {
         equipmentsTable.setItems(Equipments);
         
         s5.setCellFactory(col -> new TableCell<>() {
+            private final Button viewButton = new Button();
             private final Button editButton = new Button();
-            private final Button deleteButton = new Button();
+            private final Button detailsButton = new Button();
+            private final Button addStockButton = new Button();
             private final HBox buttonContainer = new HBox(5);
 
             {
+                ImageView cancelIcon0 = new ImageView(new Image("icons/magnifying-glass.png")); // Replace with your icon file
+                cancelIcon0.setFitHeight(23); 
+                cancelIcon0.setFitWidth(23);
+                
+                viewButton.setGraphic(cancelIcon0);
+                viewButton.setContentDisplay(ContentDisplay.LEFT); 
+                viewButton.setStyle("-fx-background-color:transparent;");
+                
                 ImageView cancelIcon = new ImageView(new Image("icons/edit.png")); // Replace with your icon file
                 cancelIcon.setFitHeight(23); 
                 cancelIcon.setFitWidth(23);
@@ -374,72 +629,410 @@ public class adminController {
                 editButton.setContentDisplay(ContentDisplay.LEFT); 
                 editButton.setStyle("-fx-background-color:transparent;");
                 
-                ImageView cancelIcon2 = new ImageView(new Image("icons/delete.png")); // Replace with your icon file
+                ImageView cancelIcon2 = new ImageView(new Image("icons/reserve.png")); // Replace with your icon file
                 cancelIcon2.setFitHeight(23); 
                 cancelIcon2.setFitWidth(23);
                 
-                deleteButton.setGraphic(cancelIcon2);
-                deleteButton.setContentDisplay(ContentDisplay.LEFT); 
-                deleteButton.setStyle("-fx-background-color:transparent;");
+                detailsButton.setGraphic(cancelIcon2);
+                detailsButton.setContentDisplay(ContentDisplay.LEFT); 
+                detailsButton.setStyle("-fx-background-color:transparent;");
                 
-                buttonContainer.getChildren().addAll(editButton, deleteButton);
+                ImageView cancelIcon3 = new ImageView(new Image("icons/add.png")); // Replace with your icon file
+                cancelIcon3.setFitHeight(60); 
+                cancelIcon3.setFitWidth(60);
+                
+                addStockButton.setGraphic(cancelIcon3);
+                addStockButton.setContentDisplay(ContentDisplay.LEFT); 
+                addStockButton.setStyle("-fx-background-color:transparent;");
+                
+                buttonContainer.getChildren().addAll(viewButton, editButton, detailsButton, addStockButton);
                 buttonContainer.setAlignment(Pos.CENTER);
+                
+                viewButton.setOnAction(event -> {
+                    equipmentModel request = getTableView().getItems().get(getIndex());
+                    try {
+                        showStockHistory(request.getId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
                 
                 editButton.setOnAction(event -> {
                     equipmentModel request = getTableView().getItems().get(getIndex());
-                    System.out.println(request.getId() +"----"+request.getAvailable());
-                     
-                    try {
-                        equipmentID=request.getId();
-                        availableStock=request.getAvailable();
-                        
-                        if(request.getStock().equals(request.getAvailable())){
-                            add.setDisable(true);
-                            save.setDisable(false);
-                            nameOfEquipment.setText(request.getName());
-                            stocksAvailable.setText(request.getStock());
+                    System.out.println(request.getId() + " ---- " + request.getAvailable());
 
-                        }else{
-                            JOptionPane.showMessageDialog(null, "Cant proceed, Complete the number of stocks first");
+                    try {
+                        String equipmentID = request.getId();
+                        String oldName = request.getName();
+
+                        // 1️⃣ Prompt for new name
+                        TextInputDialog nameDialog = new TextInputDialog(oldName);
+                        nameDialog.setTitle("Edit Equipment");
+                        nameDialog.setHeaderText("Edit name for Equipment ID: " + equipmentID);
+                        nameDialog.setContentText("Enter new name:");
+                        Optional<String> nameResult = nameDialog.showAndWait();
+                        if (!nameResult.isPresent()) {
+                            return; // cancelled
                         }
-                        //loadReservationTable();
-//                        getRequest(); 
-//                        pendingTable.setItems(requestsPending); 
+                        String newName = nameResult.get().trim();
+                        if (newName.isEmpty()) {
+                            showAlert(Alert.AlertType.WARNING, "Invalid Input", "Name cannot be empty.");
+                            return;
+                        }
+
+                        // 2️⃣ Prompt for stockRoom choice (1 or 2)
+                        ChoiceDialog<Integer> roomDialog = new ChoiceDialog<>(1, 1, 2);
+                        roomDialog.setTitle("Edit Stock Room");
+                        roomDialog.setHeaderText("Choose stockRoom for " + newName);
+                        roomDialog.setContentText("Select stockRoom (1 or 2):");
+                        Optional<Integer> roomResult = roomDialog.showAndWait();
+                        if (!roomResult.isPresent()) {
+                            return; // cancelled
+                        }
+                        int newStockRoom = roomResult.get();
+                        // ✅ Always use two separate statements
+                        java.sql.Statement updateStatement = con.createStatement();
+                        java.sql.Statement readStatement = con.createStatement();
+
+                        // ✅ 1. Update equipments table
+                        String updateEquipment = "UPDATE equipments SET name = '" + newName + "', stockRoom = " + newStockRoom
+                                               + " WHERE id = " + equipmentID;
+                        updateStatement.executeUpdate(updateEquipment);
+
+                        // ✅ 2. Get all related serials
+                        ResultSet rs = readStatement.executeQuery(
+                            "SELECT id, serial_num FROM serial WHERE equipment_id = " + equipmentID
+                        );
+
+                        // ✅ 3. Update each serial_num using the updateStatement
+                        while (rs.next()) {
+                            int serialId = rs.getInt("id");
+                            String oldSerialNum = rs.getString("serial_num");
+
+                            String[] parts = oldSerialNum.split("-");
+                            String newSerialNum = newName + "-" + parts[1];
+
+                            updateStatement.executeUpdate(
+                                "UPDATE serial SET serial_num = '" + newSerialNum + "' WHERE id = " + serialId
+                            );
+                        }
+
+                        // ✅ Clean up
+                        rs.close();
+                        readStatement.close();
+                        updateStatement.close();
+
+                        showAlert(Alert.AlertType.INFORMATION, "Success", "Equipment updated successfully!");
+
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-                deleteButton.setOnAction(event -> {
+
+                detailsButton.setOnAction(event -> {
                     equipmentModel request = getTableView().getItems().get(getIndex());
-                    System.out.println(request.getId() +"----"+request.getAvailable());
-                     
+                    System.out.println(request.getId() + " ---- " + request.getAvailable());
+
                     try {
-                        equipmentID=request.getId();
-                        availableStock=request.getAvailable();
-                        if(request.getStock().equals(request.getAvailable())){
-                            int response = JOptionPane.showConfirmDialog(
-                                    null, 
-                                    "Are you sure you want to delete "+request.getName()+" ?", 
-                                    "Confirmation", 
-                                    JOptionPane.YES_NO_OPTION, 
-                                    JOptionPane.QUESTION_MESSAGE
+                        String equipmentID = request.getId();
+                        String equipmentName = request.getName();
+
+                        // 1️⃣ Ask user: View Inventory or Remarks?
+                        ChoiceDialog<String> choiceDialog = new ChoiceDialog<>("Inventory Details", "Inventory Details", "Remarks");
+                        choiceDialog.setTitle("View Details");
+                        choiceDialog.setHeaderText("Choose what to view for: " + equipmentName);
+                        choiceDialog.setContentText("Select option:");
+
+                        Optional<String> choiceResult = choiceDialog.showAndWait();
+                        if (!choiceResult.isPresent()) {
+                            return; // Cancelled
+                        }
+
+                        String selectedOption = choiceResult.get();
+
+                        java.sql.Statement statement = con.createStatement();
+
+                        if (selectedOption.equals("Inventory Details")) {
+                            // ✅ Show Inventory Details
+                            ResultSet rs = statement.executeQuery(
+                                "SELECT * FROM inventory WHERE equipment_id = '" + equipmentID + "'"
+                            );
+                            if (rs.next()) {
+                                Dialog<Void> dialog = new Dialog<>();
+                                dialog.setTitle("Inventory Details for: " + equipmentName);
+                                dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+                                GridPane grid = new GridPane();
+                                grid.setHgap(10);
+                                grid.setVgap(10);
+                                grid.setPadding(new Insets(10));
+                                grid.setPrefWidth(500);
+                                int row = 0;
+                                do {
+                                    Label dateLabel = new Label("Date Purchased:");
+                                    Label dateValue = new Label(rs.getString("date_purchased"));
+
+                                    Label propNumLabel = new Label("Property No:");
+                                    Label propNumValue = new Label(rs.getString("property_num"));
+
+                                    Label descLabel = new Label("Description:");
+                                    Label descValue = new Label(rs.getString("description"));
+                                    descValue.setWrapText(true); // Wrap if long
+
+                                    Label serialLabel = new Label("Serial No:");
+                                    Label serialValue = new Label(rs.getString("serial_num"));
+
+                                    Label amountLabel = new Label("Amount:");
+                                    Label amountValue = new Label(rs.getString("amount"));
+
+                                    Label parLabel = new Label("PAR No:");
+                                    Label parValue = new Label(rs.getString("par_num"));
+
+                                    grid.add(dateLabel, 0, row);
+                                    grid.add(dateValue, 1, row++);
+                                    grid.add(propNumLabel, 0, row);
+                                    grid.add(propNumValue, 1, row++);
+                                    grid.add(descLabel, 0, row);
+                                    grid.add(descValue, 1, row++);
+                                    grid.add(serialLabel, 0, row);
+                                    grid.add(serialValue, 1, row++);
+                                    grid.add(amountLabel, 0, row);
+                                    grid.add(amountValue, 1, row++);
+                                    grid.add(parLabel, 0, row);
+                                    grid.add(parValue, 1, row++);
+
+                                    // Add separator between multiple records if needed
+                                    if (!rs.isLast()) {
+                                        grid.add(new Separator(), 0, row++, 2, 1);
+                                    }
+
+                                } while (rs.next());
+
+                                ScrollPane scrollPane = new ScrollPane(grid);
+                                scrollPane.setFitToWidth(true);
+                                dialog.getDialogPane().setContent(scrollPane);
+
+                                dialog.showAndWait();
+                            
+
+                            } else {
+                                // ❗ No inventory found → ask to add
+                                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                                confirm.setTitle("Add Inventory Details");
+                                confirm.setHeaderText("No inventory details found for this equipment.");
+                                confirm.setContentText("Do you want to add inventory details now?");
+
+                                ButtonType yesButton = new ButtonType("Yes");
+                                ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+                                confirm.getButtonTypes().setAll(yesButton, noButton);
+
+                                Optional<ButtonType> result = confirm.showAndWait();
+                                if (result.isPresent() && result.get() == yesButton) {
+                                    addInventoryDetails(Integer.parseInt(equipmentID));
+                                }
+                            }
+
+                            rs.close();
+
+                        } else if (selectedOption.equals("Remarks")) {
+                            // ✅ Show Remarks in a TableView in a Dialog
+
+                            ResultSet rs = statement.executeQuery(
+                                "SELECT remark, date FROM remarks WHERE equipment_id = '" + equipmentID + "' ORDER BY date DESC"
                             );
 
-                            // Check the user's response
-                            if (response == JOptionPane.YES_OPTION) {
-                                deleteEquipment();
+                            ObservableList<RemarkModel> remarksList = FXCollections.observableArrayList();
+                            while (rs.next()) {
+                                remarksList.add(new RemarkModel(rs.getString("remark"), rs.getString("date")));
                             }
-                        }else{
-                            JOptionPane.showMessageDialog(null, "Cant proceed, Complete the number of stocks first");
+                            rs.close();
+
+                            if (remarksList.isEmpty()) {
+                                showAlert(Alert.AlertType.INFORMATION, "Remarks", "No remarks found for this equipment.");
+                                return;
+                            }
+
+                            TableView<RemarkModel> remarksTable = new TableView<>();
+                            TableColumn<RemarkModel, String> remarkCol = new TableColumn<>("Remark");
+                            remarkCol.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
+
+                            TableColumn<RemarkModel, String> dateCol = new TableColumn<>("Date");
+                            dateCol.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
+
+                            remarksTable.getColumns().addAll(remarkCol, dateCol);
+                            remarksTable.setItems(remarksList);
+                            remarksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+                            // Wrap text for long remarks
+                            remarkCol.setCellFactory(tc -> {
+                                TableCell<RemarkModel, String> cell = new TableCell<>() {
+                                    private final Text text = new Text();
+                                    {
+                                        text.wrappingWidthProperty().bind(remarkCol.widthProperty());
+                                        setGraphic(text);
+                                    }
+
+                                    @Override
+                                    protected void updateItem(String item, boolean empty) {
+                                        super.updateItem(item, empty);
+                                        text.setText(empty ? "" : item);
+                                    }
+                                };
+                                return cell;
+                            });
+                            remarkCol.setPrefWidth(500);  // 300 pixels for Remark
+                            dateCol.setPrefWidth(150);    // 150 pixels for Date
+
+
+                            // Wrap table in scrollable dialog
+                            Dialog<Void> tableDialog = new Dialog<>();
+                            tableDialog.setTitle("Remarks for: " + equipmentName);
+                            tableDialog.getDialogPane().setContent(new VBox(remarksTable));
+                            tableDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+                            tableDialog.showAndWait();
                         }
-                        
-                        //loadReservationTable();
-//                        getRequest(); 
-//                        pendingTable.setItems(requestsPending); 
+
+                        statement.close();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
+
+
+                addStockButton.setOnAction(event -> {
+                    equipmentModel request = getTableView().getItems().get(getIndex());
+                    String equipmentId = request.getId();
+                    String equipmentName = request.getName();
+
+                    System.out.println("Selected equipment: " + equipmentId + " - " + equipmentName);
+
+                    try {
+                        // 🔑 First, ask what to do
+                        ChoiceDialog<String> choiceDialog = new ChoiceDialog<>("Add Stock", "Add Stock", "Add Remark");
+                        choiceDialog.setTitle("Add Stock or Remark");
+                        choiceDialog.setHeaderText("What would you like to do for: " + equipmentName + "?");
+                        choiceDialog.setContentText("Choose action:");
+
+                        Optional<String> choiceResult = choiceDialog.showAndWait();
+                        if (choiceResult.isEmpty()) {
+                            return; // cancelled
+                        }
+
+                        String choice = choiceResult.get();
+                        java.sql.Statement statement = con.createStatement();
+
+                        if (choice.equals("Add Stock")) {
+                            // ✔️ Do your existing stock logic:
+                            TextInputDialog dialog = new TextInputDialog();
+                            dialog.setTitle("Add Stock");
+                            dialog.setHeaderText("Add stock for: " + equipmentName);
+                            dialog.setContentText("Enter quantity:");
+
+                            Optional<String> result = dialog.showAndWait();
+                            if (result.isPresent()) {
+                                int quantity = Integer.parseInt(result.get().trim());
+                                if (quantity <= 0) {
+                                    showAlert(Alert.AlertType.WARNING, "Invalid Input", "Quantity must be greater than 0.");
+                                    return;
+                                }
+
+                                // 1) Insert into stocks history
+                                String insertStock = "INSERT INTO stocks (equipment_id, stocks, dated_added) "
+                                        + "VALUES (" + equipmentId + ", " + quantity + ", NOW())";
+                                statement.executeUpdate(insertStock);
+
+                                // 2) Get last serial
+                                String getLastSerial = "SELECT serial_num FROM serial "
+                                        + "WHERE equipment_id = " + equipmentId + " ORDER BY id DESC LIMIT 1";
+                                ResultSet rs = statement.executeQuery(getLastSerial);
+                                int lastNumber = 0;
+                                if (rs.next()) {
+                                    String lastSerial = rs.getString("serial_num");
+                                    String[] parts = lastSerial.split("-");
+                                    if (parts.length == 2) {
+                                        lastNumber = Integer.parseInt(parts[1]);
+                                    }
+                                }
+
+                                // 3) Insert new serials
+                                for (int i = 1; i <= quantity; i++) {
+                                    int newNumber = lastNumber + i;
+                                    String serialNum = equipmentName + "-" + newNumber;
+                                    String insertSerial = "INSERT INTO serial (serial_num, equipment_id) "
+                                            + "VALUES ('" + serialNum + "', " + equipmentId + ")";
+                                    statement.executeUpdate(insertSerial);
+                                }
+
+                                // 4) Update equipment stock counts
+                                String updateEquipment = "UPDATE equipments "
+                                        + "SET stock = (SELECT COUNT(*) FROM serial WHERE equipment_id = " + equipmentId + " AND status = 'available'), "
+                                        + "available = (SELECT COUNT(*) FROM serial WHERE equipment_id = " + equipmentId + ") "
+                                        + "WHERE id = " + equipmentId;
+                                statement.executeUpdate(updateEquipment);
+
+                                showAlert(Alert.AlertType.INFORMATION, "Success", "Stock added successfully!");
+                                loadEquipmentsTable2();
+                            }
+
+                        } else if (choice.equals("Add Remark")) {
+                            // ✔️ New: add remark
+                            // ✅ Create custom dialog with TextArea
+                            Dialog<String> remarkDialog = new Dialog<>();
+                            remarkDialog.setTitle("Add Remark");
+                            remarkDialog.setHeaderText("Add remark for: " + equipmentName);
+
+                            // ✅ Add OK + Cancel buttons
+                            ButtonType okButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+                            remarkDialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+                            // ✅ Use a TextArea for multiline input
+                            TextArea textArea = new TextArea();
+                            textArea.setPromptText("Enter remark here...");
+                            textArea.setPrefRowCount(5);    // more rows = bigger box
+                            textArea.setPrefColumnCount(40); // wider
+                            textArea.setWrapText(true);
+
+                            remarkDialog.getDialogPane().setContent(textArea);
+
+                            // ✅ Convert the result
+                            remarkDialog.setResultConverter(dialogButton -> {
+                                if (dialogButton == okButtonType) {
+                                    return textArea.getText();
+                                }
+                                return null;
+                            });
+
+                            Optional<String> remarkResult = remarkDialog.showAndWait();
+
+                            if (remarkResult.isPresent()) {
+                                String remarkText = remarkResult.get().trim();
+                                if (remarkText.isEmpty()) {
+                                    showAlert(Alert.AlertType.WARNING, "Invalid Input", "Remark cannot be empty.");
+                                    return;
+                                }
+
+                                String insertRemark = "INSERT INTO remarks (equipment_id, remark) "
+                                        + "VALUES (" + equipmentId + ", '" + remarkText + "')";
+                                statement.executeUpdate(insertRemark);
+
+                                showAlert(Alert.AlertType.INFORMATION, "Success", "Remark added successfully!");
+                            }
+
+                        }
+
+                        statement.close();
+
+                    } catch (NumberFormatException nfe) {
+                        showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please enter a valid number.");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+
             }
             @Override
             protected void updateItem(Void item, boolean empty) {
@@ -452,6 +1045,75 @@ public class adminController {
             }
         });
     }
+    @FXML
+    private void viewStockHistory() throws Exception{
+        showStockHistory(null);
+    }
+    private void showStockHistory(String equipmentID) throws Exception {
+        java.sql.Statement statement = con.createStatement();
+
+        String sql;
+        if (equipmentID == null || equipmentID.isEmpty()) {
+            sql = "SELECT s.id, s.equipment_id, e.name AS equipment_name, s.stocks, s.dated_added "
+                + "FROM stocks s JOIN equipments e ON s.equipment_id = e.id "
+                + "ORDER BY s.dated_added DESC";
+        } else {
+            sql = "SELECT s.id, s.equipment_id, e.name AS equipment_name, s.stocks, s.dated_added "
+                + "FROM stocks s JOIN equipments e ON s.equipment_id = e.id "
+                + "WHERE s.equipment_id = '" + equipmentID + "' "
+                + "ORDER BY s.dated_added DESC";
+        }
+
+        ResultSet rs = statement.executeQuery(sql);
+
+        TableView<StockRecord> table = new TableView<>();
+
+        TableColumn<StockRecord, String> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(data -> data.getValue().idProperty());
+
+        TableColumn<StockRecord, String> eqIdCol = new TableColumn<>("Equipment ID");
+        eqIdCol.setCellValueFactory(data -> data.getValue().equipmentIdProperty());
+
+        TableColumn<StockRecord, String> eqNameCol = new TableColumn<>("Equipment Name");
+        eqNameCol.setCellValueFactory(data -> data.getValue().equipmentNameProperty());
+
+        TableColumn<StockRecord, String> stocksCol = new TableColumn<>("Stocks Added");
+        stocksCol.setCellValueFactory(data -> data.getValue().stocksProperty());
+
+        TableColumn<StockRecord, String> dateCol = new TableColumn<>("Date Added");
+        dateCol.setCellValueFactory(data -> data.getValue().dateAddedProperty());
+
+        table.getColumns().addAll(idCol, eqIdCol, eqNameCol, stocksCol, dateCol);
+
+        ObservableList<StockRecord> stockHistory = FXCollections.observableArrayList();
+        while (rs.next()) {
+            stockHistory.add(new StockRecord(
+                rs.getString("id"),
+                rs.getString("equipment_id"),
+                rs.getString("equipment_name"),
+                rs.getString("stocks"),
+                rs.getString("dated_added")
+            ));
+        }
+        table.setItems(stockHistory);
+
+        rs.close();
+        statement.close();
+
+        ScrollPane scrollPane = new ScrollPane(table);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(400);
+        scrollPane.setPrefWidth(800);
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Stock History");
+        dialog.getDialogPane().setContent(scrollPane);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
+    }
+
     ObservableList<serialModel> availSerials = FXCollections.observableArrayList();
     public void getAllAvailableSerialNumbers()throws Exception{
         java.sql.Statement statement = con.createStatement();
@@ -506,9 +1168,14 @@ public class adminController {
         });
     }
     public void confirmSerialNumbersClick()throws Exception{
-        availableSerialPane.setVisible(false);
-        userPane.setVisible(true);
-        loadUsersTable();
+        if(!selectedSerials.isEmpty()){
+            availableSerialPane.setVisible(false);
+            userPane.setVisible(true);
+            loadUsersTable();
+        }else{
+            showAlert(Alert.AlertType.INFORMATION, "Failed", "Pick an item!");
+        }
+        
     }
     
     
@@ -580,8 +1247,9 @@ public class adminController {
             String iii = resultSet.getString("stock");
             String iiii = resultSet.getString("available");
             String iiiii = resultSet.getString("date_created");
+            String iiiiii = resultSet.getString("stockRoom");
             
-            Equipments.add(new equipmentModel(i,ii,iii,iiii,iiiii));
+            Equipments.add(new equipmentModel(i,ii,iii,iiii,iiiii,iiiiii));
             
         }
     }
@@ -1121,25 +1789,25 @@ public class adminController {
         cancelIcon.setFitHeight(30); 
         cancelIcon.setFitWidth(30);
 
-        add.setGraphic(cancelIcon);
-        add.setContentDisplay(ContentDisplay.LEFT); 
-        add.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
+//        add.setGraphic(cancelIcon);
+//        add.setContentDisplay(ContentDisplay.LEFT); 
+//        add.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
         
         ImageView cancelIcon2 = new ImageView(new Image("icons/save.png")); // Replace with your icon file
         cancelIcon2.setFitHeight(30); 
         cancelIcon2.setFitWidth(30);
 
-        save.setGraphic(cancelIcon2);
-        save.setContentDisplay(ContentDisplay.LEFT); 
-        save.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
+//        save.setGraphic(cancelIcon2);
+//        save.setContentDisplay(ContentDisplay.LEFT); 
+//        save.setStyle("-fx-background-color:transparent; -fx-border-radius:10;");
         
         ImageView cancelIcon3 = new ImageView(new Image("icons/confirm.png")); // Replace with your icon file
         cancelIcon3.setFitHeight(30); 
         cancelIcon3.setFitWidth(30);
         
         
-        add.setDisable(false);
-        save.setDisable(true);
+//        add.setDisable(false);
+//        save.setDisable(true);
         
         
         

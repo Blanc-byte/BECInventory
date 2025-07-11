@@ -17,13 +17,15 @@ public class equipmentModel {
     private final StringProperty stock;
     private final StringProperty available;
     private final StringProperty dateCreated;
+    private final StringProperty stockRoom;
 
-    public equipmentModel(String id, String name, String stock, String available, String dateCreated) {
+    public equipmentModel(String id, String name, String stock, String available, String dateCreated, String stockRoom) {
         this.id = new SimpleStringProperty(id);
         this.name = new SimpleStringProperty(name);
         this.stock = new SimpleStringProperty(stock);
         this.available = new SimpleStringProperty(available);
         this.dateCreated = new SimpleStringProperty(dateCreated);
+        this.stockRoom = new SimpleStringProperty(stockRoom);
     }
 
     // Property methods
@@ -32,6 +34,7 @@ public class equipmentModel {
     public StringProperty stockProperty() { return stock; }
     public StringProperty availableProperty() { return available; }
     public StringProperty dateCreatedProperty() { return dateCreated; }
+    public StringProperty stockRoomProperty() { return stockRoom; }
 
     // Getter methods
     public String getId() { return id.get(); }
@@ -39,6 +42,7 @@ public class equipmentModel {
     public String getStock() { return stock.get(); }
     public String getAvailable() { return available.get(); }
     public String getDateCreated() { return dateCreated.get(); }
+    public String getStockRoom() { return stockRoom.get(); }
 
     // Setter methods
     public void setId(String id) { this.id.set(id); }
@@ -46,4 +50,5 @@ public class equipmentModel {
     public void setStock(String stock) { this.stock.set(stock); }
     public void setAvailable(String available) { this.available.set(available); }
     public void setDateCreated(String dateCreated) { this.dateCreated.set(dateCreated); }
+    public void setStockRoom(String stockRoom) { this.stockRoom.set(stockRoom); }
 }
